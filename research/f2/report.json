@@ -1,0 +1,276 @@
+{
+ "phase": "F2",
+ "generated_at_utc": "2026-09-30T12:51:18+00:00",
+ "verdict": "F2_FAIL",
+ "config_fingerprint": "7e945e717983b088",
+ "prereg_sha256": {
+  "h1_m3_eod_tree.json": "9d6f7f24d250452e959a3a1a70a01f60d05ecd1461c4c5145775cab3ebdf64f3",
+  "h1_m3_eod_tree.pkl": "b91630b68baac8fc9cf38dbb86a4ac4c9ecc6b5ffc5879de4045854ac109b0f9",
+  "h2_range_rule.json": "e266849a75741e8b286f8a7d9e02e4e39cfd0f4460667abd24c2372c60a83015"
+ },
+ "h2_thresholds": [
+  0.6848121285438538,
+  0.8871178030967712
+ ],
+ "data": {
+  "manifest_sha256": {
+   "xauusd_m1_2023.csv.gz": "ad872abe38adf8d0fbaa7d94a589d687bd350f898152dbdfdaa23ff71a6b82c7",
+   "xauusd_m1_2024.csv.gz": "65415baed98abced7c0e6ce5be54e5f89d59283ac41faad6e7248add28c4c17e"
+  },
+  "per_year": {
+   "2023": {
+    "days": 258,
+    "bars": 352093,
+    "quarantined": 1,
+    "weekend_days": 0,
+    "days_with_gap_gt5": 2,
+    "zero_spread_bars": 331,
+    "negative_spread_bars": 0
+   },
+   "2024": {
+    "days": 260,
+    "bars": 355625,
+    "quarantined": 0,
+    "weekend_days": 0,
+    "days_with_gap_gt5": 0,
+    "zero_spread_bars": 352,
+    "negative_spread_bars": 0
+   }
+  },
+  "quarantined_dates": [
+   "2023-01-16"
+  ]
+ },
+ "results": [
+  {
+   "hypothesis": "H1",
+   "per_year": {
+    "2023": {
+     "trades": 61869,
+     "days": 256,
+     "mean_usd": 0.03710565649097859,
+     "mean_atr": 0.3204456983649376,
+     "win_rate": 0.5100615817291374,
+     "long_share": 0.22271250545507443,
+     "eligible": 61869,
+     "b0_long_usd": -0.19440592443000965,
+     "b0_short_usd": -0.3186999973906112
+    },
+    "2024": {
+     "trades": 62190,
+     "days": 259,
+     "mean_usd": -1.2235786031297722,
+     "mean_atr": -1.2994347292546446,
+     "win_rate": 0.46599131693198265,
+     "long_share": 0.2650908506190706,
+     "eligible": 62190,
+     "b0_long_usd": 0.31220882250136683,
+     "b0_short_usd": -0.7936897142408746
+    }
+   },
+   "trades": 124059,
+   "days": 515,
+   "mean_usd": -0.5948674700521541,
+   "mean_atr": -0.4915902183655036,
+   "win_rate": 0.48796943389838704,
+   "boot_lower_usd": -1.5131570661938456,
+   "p_boot": 0.8509,
+   "checks": {
+    "positive_each_year": false,
+    "boot_lower_positive": false,
+    "beats_b0_each_year": false,
+    "holm": false
+   },
+   "p_holm": 1.0,
+   "passes": false
+  },
+  {
+   "hypothesis": "H2",
+   "per_year": {
+    "2023": {
+     "trades": 212,
+     "days": 212,
+     "mean_usd": -0.17902734490564814,
+     "mean_atr": -0.2651915876751308,
+     "win_rate": 0.5,
+     "long_share": 0.21226415094339623,
+     "eligible": 256,
+     "b0_long_usd": 0.1783058287499933,
+     "b0_short_usd": -0.702358233749993
+    },
+    "2024": {
+     "trades": 222,
+     "days": 222,
+     "mean_usd": -1.2015895322522512,
+     "mean_atr": -2.0301771622134144,
+     "win_rate": 0.44594594594594594,
+     "long_share": 0.25675675675675674,
+     "eligible": 259,
+     "b0_long_usd": 1.137914707027029,
+     "b0_short_usd": -1.6424327833204653
+    }
+   },
+   "trades": 434,
+   "days": 434,
+   "mean_usd": -0.7020891089400856,
+   "mean_atr": -1.168018310134806,
+   "win_rate": 0.47235023041474655,
+   "boot_lower_usd": -2.207730786175098,
+   "p_boot": 0.7759,
+   "checks": {
+    "positive_each_year": false,
+    "boot_lower_positive": false,
+    "beats_b0_each_year": false,
+    "holm": false
+   },
+   "p_holm": 1.0,
+   "passes": false
+  }
+ ],
+ "charts": {
+  "H1": [
+   {
+    "file": "charts/H1/ex_01.svg",
+    "entry": "2023-03-06 12:00",
+    "exit": "2023-03-06 21:30",
+    "side": "SHORT",
+    "net_usd": 4.000756159999973
+   },
+   {
+    "file": "charts/H1/ex_02.svg",
+    "entry": "2023-04-28 15:35",
+    "exit": "2023-04-28 21:30",
+    "side": "SHORT",
+    "net_usd": -8.333423999999955
+   },
+   {
+    "file": "charts/H1/ex_03.svg",
+    "entry": "2023-08-02 02:20",
+    "exit": "2023-08-02 21:30",
+    "side": "SHORT",
+    "net_usd": 14.587575359999954
+   },
+   {
+    "file": "charts/H1/ex_04.svg",
+    "entry": "2023-11-15 10:45",
+    "exit": "2023-11-15 21:30",
+    "side": "SHORT",
+    "net_usd": 9.55692480000001
+   },
+   {
+    "file": "charts/H1/ex_05.svg",
+    "entry": "2023-11-24 05:00",
+    "exit": "2023-11-24 20:45",
+    "side": "SHORT",
+    "net_usd": -10.513753280000037
+   },
+   {
+    "file": "charts/H1/ex_06.svg",
+    "entry": "2024-04-04 04:20",
+    "exit": "2024-04-04 21:30",
+    "side": "SHORT",
+    "net_usd": -1.6335392000001636
+   },
+   {
+    "file": "charts/H1/ex_07.svg",
+    "entry": "2024-04-08 13:45",
+    "exit": "2024-04-08 21:30",
+    "side": "LONG",
+    "net_usd": -1.3549670399999272
+   },
+   {
+    "file": "charts/H1/ex_08.svg",
+    "entry": "2024-04-16 18:15",
+    "exit": "2024-04-16 21:30",
+    "side": "SHORT",
+    "net_usd": -4.16633087999991
+   },
+   {
+    "file": "charts/H1/ex_09.svg",
+    "entry": "2024-07-16 14:20",
+    "exit": "2024-07-16 21:30",
+    "side": "SHORT",
+    "net_usd": -24.648043520000037
+   },
+   {
+    "file": "charts/H1/ex_10.svg",
+    "entry": "2024-11-11 04:30",
+    "exit": "2024-11-11 21:30",
+    "side": "SHORT",
+    "net_usd": 53.924457599999656
+   }
+  ],
+  "H2": [
+   {
+    "file": "charts/H2/ex_01.svg",
+    "entry": "2023-02-06 01:10",
+    "exit": "2023-02-06 21:30",
+    "side": "SHORT",
+    "net_usd": -3.6097193599999273
+   },
+   {
+    "file": "charts/H2/ex_02.svg",
+    "entry": "2023-03-31 01:10",
+    "exit": "2023-03-31 21:30",
+    "side": "SHORT",
+    "net_usd": 11.076641600000126
+   },
+   {
+    "file": "charts/H2/ex_03.svg",
+    "entry": "2023-06-23 01:10",
+    "exit": "2023-06-23 21:30",
+    "side": "SHORT",
+    "net_usd": -5.891250240000127
+   },
+   {
+    "file": "charts/H2/ex_04.svg",
+    "entry": "2023-08-02 02:20",
+    "exit": "2023-08-02 21:30",
+    "side": "SHORT",
+    "net_usd": 14.587575359999954
+   },
+   {
+    "file": "charts/H2/ex_05.svg",
+    "entry": "2023-09-04 01:10",
+    "exit": "2023-09-04 21:30",
+    "side": "SHORT",
+    "net_usd": 1.3779180799998454
+   },
+   {
+    "file": "charts/H2/ex_06.svg",
+    "entry": "2023-10-06 01:05",
+    "exit": "2023-10-06 21:30",
+    "side": "SHORT",
+    "net_usd": -13.148262079999855
+   },
+   {
+    "file": "charts/H2/ex_07.svg",
+    "entry": "2023-10-09 01:05",
+    "exit": "2023-10-09 21:30",
+    "side": "SHORT",
+    "net_usd": -1.8693171199998544
+   },
+   {
+    "file": "charts/H2/ex_08.svg",
+    "entry": "2023-11-23 02:40",
+    "exit": "2023-11-23 21:30",
+    "side": "SHORT",
+    "net_usd": -1.7837190400000182
+   },
+   {
+    "file": "charts/H2/ex_09.svg",
+    "entry": "2024-08-30 01:40",
+    "exit": "2024-08-30 21:30",
+    "side": "LONG",
+    "net_usd": -17.870675200000093
+   },
+   {
+    "file": "charts/H2/ex_10.svg",
+    "entry": "2024-10-03 01:10",
+    "exit": "2024-10-03 21:30",
+    "side": "LONG",
+    "net_usd": -0.8250963200001638
+   }
+  ]
+ }
+}

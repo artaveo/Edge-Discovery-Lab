@@ -2,7 +2,7 @@
 
 Owner folder `E:\Trade\Edge-Discovery-Lab` · repository `Edge-Discovery-Lab` (owner publishes it from GitHub Desktop) · commits go straight to `main` (no branches, no PRs).
 
-Status: F1 is complete (`F1_WEAK`). **Phase F2 (one-shot test on 2023–2024) is authorized by the owner (2026-09-30)** and pre-registered in Section 11. 2025 stays locked. Nothing beyond F2 is authorized.
+Status: F1 complete (`F1_WEAK`). **F2 complete: `F2_FAIL`** (one-shot test on 2023–2024, Section 11). Per the pre-registration the project stops. 2025 stays locked. Nothing further is authorized.
 
 ---
 
@@ -322,3 +322,9 @@ The report gives, per hypothesis and year: trades, days, mean net (USD/oz and AT
 - Owner decision: F2 = a one-shot test of two frozen hypotheses on 2023–2024 (Section 11). 2025 stays locked.
 - H1 = the second F1 M3-EOD tree exactly as fitted in F1. Its training data is **2020-07-21 → 2021-12-30**, and 2022 was its out-of-fold test year; it is not refitted on 2022. H2 = the shared previous-day range rule with the second tree's exact thresholds. Model files and their SHA-256 are in `research/f2/prereg/`.
 - `EL_ExportM1.mq5` now exports only 2023–2024 to `EdgeLab\data\f2` (hard guard: nothing before 2023-01-01 or from 2025-01-01 on). `verify_export.py` checks F1 (`data/`) or F2 (`data/f2/`) by phase. `config/el_export.ini` and the Run Card are updated. No 2023–2024 data exists in the repo yet.
+
+## 2026-09-30 — F2 Step C done (cloud session) — verdict `F2_FAIL`, project stops
+- `python/edgelab/f2.py` and its synthetic tests were committed (`1902058`) **before** the 2023–2024 data was loaded. Planted H2 edge → `F2_PASS`, random walk → `F2_FAIL`; 62 tests pass. `verify_export.py data/f2` → `EXPORT OK`.
+- One run (ledger `research/f2/trials_ledger.jsonl`). 2023: 258 days (1 quarantined, 2023-01-16); 2024: 260 days.
+- H1 (tree): mean net −0.59 USD/oz (2023 +0.04, 2024 −1.22), bootstrap lower −1.51, p 0.85. H2 (range rule): −0.70 (2023 −0.18, 2024 −1.20), lower −2.21, p 0.78. Neither hypothesis meets any of the four pass checks. Both rules sell 74–79% of the time, and gold rose strongly in 2024 (always long: +0.31 per moment, +1.14 per day).
+- Report: `research/f2/report.md`, `report.json`, 10 charts per hypothesis. Per Section 11.4, `F2_FAIL` → the project stops. 2025 was never exported or seen.
