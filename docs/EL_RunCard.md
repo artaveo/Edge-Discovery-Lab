@@ -17,20 +17,20 @@ Data folder below = `%APPDATA%\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF
    ```
 4. In the terminal: *Tools → Options → Charts → Max bars in chart = Unlimited* (date-range `CopyRates`
    can otherwise be capped). Algo Trading on.
-5. Run the script with its defaults (XAUUSD, 2019 → 2022, folder `EdgeLab\data`):
+5. Run the script with its defaults (XAUUSD, 2020-07-01 → 2022-12-31, folder `EdgeLab\data`):
    either drag it onto any chart, or copy `config\el_export.ini` into `<data folder>\config\` and start
    `terminal64.exe /config:"<data folder>\config\el_export.ini"`.
-   - The script **refuses** any year outside 2019–2022 and never writes a bar dated 2023-01-01 or later.
-   - Experts log must end with `EL_ExportM1 DONE: <rows> rows in 4 files`. Any `ERROR` means nothing
+   - The script **refuses** any year outside 2020–2022, skips every bar before 2020-07-01 and never writes a bar dated 2023-01-01 or later.
+   - Experts log must end with `EL_ExportM1 DONE: <rows> rows in 3 files`. Any `ERROR` means nothing
      usable was written — fix and rerun (a rerun is not a trial; no analysis has happened yet).
-6. Output in `<data folder>\MQL5\Files\EdgeLab\data\`: `xauusd_m1_2019.csv.gz` … `xauusd_m1_2022.csv.gz`
-   and `manifest.json`. Copy these 5 files into the repo folder `data\`.
+6. Output in `<data folder>\MQL5\Files\EdgeLab\data\`: `xauusd_m1_2020.csv.gz` (from 2020-07-01) … `xauusd_m1_2022.csv.gz`
+   and `manifest.json`. Copy these 4 files into the repo folder `data\`.
 7. Verify with the laptop Python (standard library only):
    ```
    %LOCALAPPDATA%\Programs\Python\Python312-arm64\python.exe python\tools\verify_export.py data
    ```
    It must print `EXPORT OK` (checks SHA-256, gzip CRC, header, row counts, first/last bar, every bar
-   inside its year, increasing times, OHLC/spread sanity, and that no 2023+ file exists).
+   inside its year and not before 2020-07-01, increasing times, OHLC/spread sanity, and that no 2023+ file exists).
 8. Commit only `data/*.csv.gz` + `data/manifest.json` → push to `main`. Say **"Step B done"**.
 
 ---

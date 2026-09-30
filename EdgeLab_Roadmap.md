@@ -21,9 +21,9 @@ This project reverses the direction. It **describes the market state numerically
 
 ### 0.2 The question of Phase F1
 
-> Does XAUUSD, in 2019–2022, contain **predictability beyond cost**? Is there a rule, learned only from the past, that on later unseen years picks moments where the average move in the predicted direction exceeds the full trading cost (spread + commission)?
+> Does XAUUSD, in 2020-07 → 2022, contain **predictability beyond cost**? Is there a rule, learned only from the past, that on later unseen years picks moments where the average move in the predicted direction exceeds the full trading cost (spread + commission)?
 
-- If the answer is **no even inside 2019–2022**, the project stops cheaply.
+- If the answer is **no even inside 2020-07 → 2022**, the project stops cheaply.
 - If **yes**, Phase F2 (validation on 2023–2024) may be authorized.
 
 ### 0.3 Non-negotiables (carried over from LSR/BTB)
@@ -34,7 +34,7 @@ This project reverses the direction. It **describes the market state numerically
 - **Every configuration tried is counted** and enters the multiple-testing correction. There is no silent retry.
 - **Rules are frozen before the numbers are seen.** Any change after a result is logged as a new, counted trial.
 - **Data discipline:**
-  - F1 **exports and uses only 2019-01-01 → 2022-12-31**. Later years are not exported in F1.
+  - F1 **exports and uses only 2020-07-01 → 2022-12-31** (see the 2026-09-30 data update below). Later years are not exported in F1.
   - The years 2023–2024 are reserved for F2.
   - **2025** is the final locked test, never looked at by anyone for XAUUSD.
   - 2026 was already used in LSR/BTB and is "seen"; it may only be reported as an extra, never used to decide.
@@ -46,12 +46,12 @@ This project reverses the direction. It **describes the market state numerically
 
 | Item | Value |
 |---|---|
-| Symbol / server | XAUUSD, FundedNext-Server 2 (history cached locally 2019–2026, verified 2026-09-30) |
+| Symbol / server | XAUUSD, FundedNext-Server 2. **Real M1 history starts mid-June 2020** (`SERIES_SERVER_FIRSTDATE` 2019-12-23, but 2019 has 134 bars and Jan–May 2020 about 500 bars a month; checked by Cowork 2026-09-30). FundedNext-Server has the same history |
 | Bars | M1, Bid OHLC + `tick_volume` + `spread` (points), via `CopyRates` |
-| Range exported in F1 | 2019-01-01 00:00 → 2022-12-31 23:59 (broker time) |
+| Range exported in F1 | **2020-07-01 00:00 → 2022-12-31 23:59** (broker time); files 2020 (from 07-01), 2021, 2022 |
 | Format | One CSV per year, gzip. Columns `time,open,high,low,close,tick_volume,spread_pts`. The time is ISO broker time; prices are normalized to digits. Paths: `data/xauusd_m1_<YYYY>.csv.gz` |
 | Integrity | `data/manifest.json` holds per-file SHA-256, row count, first/last bar, symbol digits/point/contract size at export, server name, terminal build and export time |
-| Data audit | Minutes per day, gaps > 5 min inside trade sessions, zero/negative spreads, duplicate timestamps, weekends. Report `data/audit_2019_2022.json`. A day with a gap > 30 min inside its session is **quarantined** (excluded from the sample), not repaired |
+| Data audit | Minutes per day, gaps > 5 min inside trade sessions, zero/negative spreads, duplicate timestamps, weekends. Report `data/audit_2020_2022.json`. A day with a gap > 30 min inside its session is **quarantined** (excluded from the sample), not repaired |
 
 ---
 
@@ -115,17 +115,16 @@ About 30 numbers per moment, all from completed bars at or before t. Prices are 
 
 ---
 
-## 5. Method: walk-forward inside 2019–2022
+## 5. Method: walk-forward inside 2020-07 → 2022
 
 ### 5.1 Folds (expanding window, 1-day embargo)
 
 | Fold | Train | Test (out-of-fold) |
 |---|---|---|
-| 1 | 2019 | 2020 |
-| 2 | 2019–2020 | 2021 |
-| 3 | 2019–2021 | 2022 |
+| 1 | 2020-07 → 2020-12 | 2021 |
+| 2 | 2020-07 → 2021-12 | 2022 |
 
-Only the **out-of-fold** results (2020, 2021, 2022) count.
+Only the **out-of-fold** results (2021, 2022) count.
 
 ### 5.2 Model families (pre-registered, all counted)
 
@@ -150,7 +149,7 @@ Only the **out-of-fold** results (2020, 2021, 2022) count.
 For each model family × horizon (3 × 4 = **12 configurations**), across the out-of-fold years:
 - trades, days, mean net result (USD/oz and ATR units), win rate;
 - a one-sided day-block bootstrap 95% interval (10,000 reps, seed 20260930);
-- per-year values (2020, 2021, 2022);
+- per-year values (2021, 2022);
 - the permutation p-value = share of the 200 shuffled runs with a mean ≥ the real one.
 
 Holm–Bonferroni is applied over the 12 configurations at α = 0.05.
@@ -159,11 +158,11 @@ Holm–Bonferroni is applied over the 12 configurations at α = 0.05.
 
 | Verdict | Rule |
 |---|---|
-| `F1_PASS` | At least one configuration: Holm-adjusted permutation p < 0.05 **and** bootstrap lower 95% > 0 **and** mean net > 0 in **each** of the three out-of-fold years |
+| `F1_PASS` | At least one configuration: Holm-adjusted permutation p < 0.05 **and** bootstrap lower 95% > 0 **and** mean net > 0 in **each** of the two out-of-fold years |
 | `F1_WEAK` | Some configuration has a positive mean and permutation p < 0.05 before Holm, but fails the full rule |
 | `F1_STOP` | Otherwise |
 
-- `F1_PASS` → the owner may authorize F2: validation on 2023–2024 with the rules frozen from 2019–2022.
+- `F1_PASS` → the owner may authorize F2: validation on 2023–2024 with the rules frozen from 2020-07 → 2022.
 - `F1_WEAK` or `F1_STOP` → the report says so plainly, and the owner decides.
 
 The report also shows, for any passing configuration, the **readable rules** (bins, cells or tree leaves), and 20 random example moments per rule as chart snapshots (M5, ±4 h) for the owner's visual check.
@@ -176,7 +175,7 @@ The report also shows, for any passing configuration, the **readable rules** (bi
 |---|---|---|
 | **A — code** | Claude Code **cloud** session | `MQL5/Scripts/EdgeLab/EL_ExportM1.mq5` (the export with manifest); `python/edgelab/{data,audit,window,targets,features,models,stats,report}.py`; tests with synthetic data (Section 8); `config/el_export.ini`; `docs/EL_RunCard.md`. Python may use numpy, pandas and scikit-learn (list them in `python/requirements.txt`). Commit and push to `main`, then say **"Step A done"** |
 | (owner) | owner | Fetch origin → Pull in GitHub Desktop |
-| **B — export** | **Cowork** on the owner's machine | Install and compile the export script (0 errors / 0 warnings). Run it for 2019–2022 **only**. Check the manifest, commit `data/*.csv.gz` + `data/manifest.json`, and push. It **must not** export 2023 or later. Say **"Step B done"** |
+| **B — export** | **Cowork** on the owner's machine | Install and compile the export script (0 errors / 0 warnings). Run it for 2020-07-01 → 2022-12-31 **only** (script defaults). Check the manifest, commit `data/*.csv.gz` + `data/manifest.json`, and push. It **must not** export 2023 or later. Say **"Step B done"** |
 | (owner) | owner | Nothing to do: the cloud session pulls from GitHub |
 | **C — analysis** | Claude Code **cloud** session | Install the requirements, run the tests, then the audit, targets, features, walk-forward, baselines and report. Write `research/f1/report.md` + `report.json` + chart snapshots, and the completion record. Commit and push, then say **"Step C done"** with a short Persian summary |
 
@@ -220,7 +219,7 @@ Same as the ProBTB roadmap Section 10:
 - MetaEditor CLI compile: `C:\Program Files\MetaTrader 5\MetaEditor64.exe /compile:"<file>" /log:"<log>" /inc:"<repo>\MQL5"`.
 - MT5 data folder `%APPDATA%\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075`.
 - Script startup via `config\<name>.ini` with `[StartUp] Script=...`; the ini must sit inside the data folder.
-- XAUUSD M1 history is cached for 2019–2026 on FundedNext-Server 2.
+- XAUUSD real M1 history on FundedNext starts mid-June 2020 (the local 2019.hcc is only 24 KB).
 - Python on the laptop: `%LOCALAPPDATA%\Programs\Python\Python312-arm64\python.exe` (standard library only). Heavy analysis runs in the cloud session.
 - The owner switches on Algo Trading after any terminal restart.
 
@@ -236,3 +235,10 @@ Same as the ProBTB roadmap Section 10:
 - Code: `MQL5/Scripts/EdgeLab/EL_ExportM1.mq5` (2019–2022 only, gzip CSV + manifest with SHA-256), `config/el_export.ini`, `python/edgelab/{config,data,audit,window,targets,features,models,stats,report}.py`, `python/tools/verify_export.py` (stdlib-only check for Step B), `docs/EL_RunCard.md`.
 - Blocking tests (Section 8) in `python/tests/`, all passing: window, hand-computed targets, feature brute force + look-ahead + ATR scaling, folds/embargo, day-block permutation, Holm/bootstrap, end-to-end (planted edge → `F1_PASS`, random walk → `F1_STOP`).
 - Details the roadmap left open are pre-registered in `docs/EL_RunCard.md` ("Pre-registered details") before any data exists.
+
+## 2026-09-30 — Data range changed (owner decision, before any analysis)
+- Step B found that FundedNext-Server 2 has **no real XAUUSD M1 history before mid-June 2020** (2019: 134 bars; Jan–May 2020: about 500 bars a month). Nothing was exported or committed; no analysis had run, so this is not a counted trial.
+- F1 range is now **2020-07-01 → 2022-12-31**. Folds: train 2020-07..12 → test 2021; train 2020-07..2021 → test 2022. The F1_PASS rule needs a positive mean in both out-of-fold years. 2023–2024 (F2), 2025 (locked) and 2026 (seen) are unchanged.
+- Done in this commit (Step B can continue from where it stopped): `EL_ExportM1.mq5` (min year 2020, `EL_START_DATE` 2020-07-01, 2020 starts at month 7; compiled 0 errors / 0 warnings), `python/tools/verify_export.py` (years 2020–2022, no bar before 2020-07-01), `config/el_export.ini`, `docs/EL_RunCard.md` (Step B part).
+- **Step C must first adapt the analysis code** (not changed here, because its tests need numpy/pandas): `python/edgelab/config.py` (`F1_YEARS = (2020, 2021, 2022)`, a 2020-07-01 start, the two folds above), `data.py` year guard, `report.py` (audit file name, per-year columns 2021/2022), and the tests that use 2019 dates or three out-of-fold years. All tests must pass before the analysis runs.
+

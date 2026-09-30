@@ -9,21 +9,22 @@
 //| and manifest.json (SHA-256, rows, first/last bar, symbol spec,   |
 //| server, terminal build, export time).                            |
 //|                                                                  |
-//| DATA DISCIPLINE: F1 may only export 2019-01-01 .. 2022-12-31.    |
+//| DATA DISCIPLINE: F1 may only export 2020-07-01 .. 2022-12-31.    |
 //| The script refuses any other year and never writes a bar dated   |
 //| 2023-01-01 or later.                                             |
 //+------------------------------------------------------------------+
 #property copyright   "Edge Discovery Lab"
 #property version     "1.00"
-#property description "F1 M1 export (2019-2022 only) with manifest"
+#property description "F1 M1 export (2020-07-01 .. 2022-12-31 only) with manifest"
 #property script_show_inputs
 
 input string InpSymbol   = "XAUUSD";          // Symbol
-input int    InpYearFrom = 2019;              // First year (>= 2019)
+input int    InpYearFrom = 2020;              // First year (>= 2020; 2020 starts on 07-01)
 input int    InpYearTo   = 2022;              // Last year (<= 2022)
 input string InpOutDir   = "EdgeLab\\data";   // Folder under MQL5\Files
 
-#define EL_MIN_YEAR 2019
+#define EL_MIN_YEAR 2020
+#define EL_START_DATE D'2020.07.01 00:00'   // F1 start: full M1 history on FundedNext begins mid-June 2020 (owner decision 2026-09-30)
 #define EL_MAX_YEAR 2022          // F1: never export 2023 or later
 #define EL_MAX_RETRY 40
 
@@ -141,8 +142,11 @@ bool CopyChunk(const string sym, const datetime from, const datetime to, MqlRate
 string ExportYear(const string sym, const int year, const int digits, const string dir)
   {
    const datetime limit = YearStart(EL_MAX_YEAR + 1);         // 2023-01-01 00:00 (hard guard)
-   const datetime y0 = YearStart(year);
+   const datetime y0 = (YearStart(year) > EL_START_DATE ? YearStart(year) : EL_START_DATE);   // 2020 starts on 07-01
    const datetime y1 = YearStart(year + 1);
+   MqlDateTime s0;
+   TimeToStruct(y0, s0);
+   const int first_month = s0.mon;
    uchar data[];
    if(ArrayResize(data, 0, 32 * 1024 * 1024) < 0)
       return("");
@@ -152,7 +156,7 @@ string ExportYear(const string sym, const int year, const int digits, const stri
    long rows = 0;
    datetime first_bar = 0, last_bar = 0, prev = 0;
    long dropped = 0;
-   for(int m = 1; m <= 12; m++)
+   for(int m = first_month; m <= 12; m++)
      {
       datetime from = MonthStart(year, m);
       datetime to = MonthStart(year, m + 1) - 1;
