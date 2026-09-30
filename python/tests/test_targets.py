@@ -24,17 +24,17 @@ def _example():
     #   H30     20:59 (closes 21:00): Bid 1803.50, spread 35 pts
     #   H60/EOD 21:29 (closes 21:30): Bid 1797.20, spread 25 pts
     #   after   21:30..23:55: 1900.00 (must never be used: beyond 21:30)
-    df = flat_day("2019-03-05", price=1790.0, spread_pts=30)
-    df.loc[df["time"] >= pd.Timestamp("2019-03-05 21:30"), ["open", "high", "low", "close"]] = 1900.0
-    set_bar(df, "2019-03-05 20:29", open=1800.0, high=1800.0, low=1800.0, close=1800.0, spread_pts=20)
-    set_bar(df, "2019-03-05 20:59", open=1803.5, high=1803.5, low=1803.5, close=1803.5, spread_pts=35)
-    set_bar(df, "2019-03-05 21:29", open=1797.2, high=1797.2, low=1797.2, close=1797.2, spread_pts=25)
+    df = flat_day("2021-03-09", price=1790.0, spread_pts=30)
+    df.loc[df["time"] >= pd.Timestamp("2021-03-09 21:30"), ["open", "high", "low", "close"]] = 1900.0
+    set_bar(df, "2021-03-09 20:29", open=1800.0, high=1800.0, low=1800.0, close=1800.0, spread_pts=20)
+    set_bar(df, "2021-03-09 20:59", open=1803.5, high=1803.5, low=1803.5, close=1803.5, spread_pts=35)
+    set_bar(df, "2021-03-09 21:29", open=1797.2, high=1797.2, low=1797.2, close=1797.2, spread_pts=25)
     return df
 
 
 def test_hand_computed_long_short_net():
     bars = build_bars(_example(), InstrumentSpec(point=0.01, digits=2))
-    j = _moment(bars, "2019-03-05 20:30")
+    j = _moment(bars, "2021-03-09 20:30")
     T = compute_targets(bars, j, np.full(len(bars.k5), 2.0), DEFAULT)
     comm = 2 * 0.000016 * 1800.0                     # 0.0576 USD/oz, open + close
     assert T["commission"][0] == pytest.approx(0.0576)
@@ -65,10 +65,10 @@ def test_hand_computed_long_short_net():
 
 def test_exit_uses_last_close_before_horizon_when_bar_missing():
     df = _example()
-    df = df[df["time"] != pd.Timestamp("2019-03-05 20:59")]           # the H30 bar is missing
-    set_bar(df, "2019-03-05 20:58", open=1801.0, high=1801.0, low=1801.0, close=1801.0, spread_pts=40)
+    df = df[df["time"] != pd.Timestamp("2021-03-09 20:59")]           # the H30 bar is missing
+    set_bar(df, "2021-03-09 20:58", open=1801.0, high=1801.0, low=1801.0, close=1801.0, spread_pts=40)
     bars = build_bars(df)
-    j = _moment(bars, "2019-03-05 20:30")
+    j = _moment(bars, "2021-03-09 20:30")
     T = compute_targets(bars, j, np.full(len(bars.k5), 1.0), DEFAULT)
     comm = 2 * 0.000016 * 1800.0
     assert T["long_H30"][0] == pytest.approx(1.0 - 0.20 - comm)
@@ -88,7 +88,7 @@ def test_long_plus_short_is_minus_total_cost():
 
 def test_atr_units_use_m5_wilder_atr():
     rng = np.random.default_rng(3)
-    df = flat_day("2019-03-05")
+    df = flat_day("2021-03-09")
     p = 1800 + np.cumsum(rng.normal(0, 0.2, len(df)))
     df["open"] = np.r_[p[0], p[:-1]]
     df["close"] = p
@@ -96,7 +96,7 @@ def test_atr_units_use_m5_wilder_atr():
     df["low"] = np.minimum(df["open"], df["close"]) - 0.05
     bars = build_bars(df)
     atr = m5_atr(bars, DEFAULT)
-    j = _moment(bars, "2019-03-05 15:00")
+    j = _moment(bars, "2021-03-09 15:00")
     T = compute_targets(bars, j, atr, DEFAULT)
     assert T["atr60"][0] == atr[j][0] and np.isfinite(atr[j][0])
     assert T["long_atr_H60"][0] == pytest.approx(T["long_H60"][0] / atr[j][0])

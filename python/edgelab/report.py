@@ -4,7 +4,7 @@ Usage (Step C, from ``python/``)::
 
     python -m edgelab.report --data ../data --out ../research/f1 --jobs 4
 
-Writes ``report.md``, ``report.json``, ``audit_2019_2022.json`` (to the data dir),
+Writes ``report.md``, ``report.json``, ``audit_2020_2022.json`` (to the data dir),
 chart snapshots (SVG) for passing configurations and appends the run to
 ``trials_ledger.jsonl`` (every run is a counted trial).
 """
@@ -275,6 +275,7 @@ def write_report(prep: Prepared, res: dict, out_dir: Path, cfg: F1Config = DEFAU
         "config_fingerprint": cfg.fingerprint(),
         "config": cfg.as_dict(),
         "n_configurations": len(res["rows"]),
+        "test_years": [int(ty) for _, ty in cfg.folds],
         "data": {
             "rows_raw": prep.audit["rows_raw"], "days": prep.audit["n_days"],
             "quarantined_days": prep.audit["n_quarantined"],
@@ -311,16 +312,18 @@ def _markdown(s: dict, tests_summary: str, files_changed: str) -> str:
          ""]
     for fn, h in s["data"]["manifest_sha256"].items():
         L.append(f"- `{fn}` SHA-256 `{h}`")
-    L += ["", "## The 12 configurations (out-of-fold 2020–2022, net of cost)", "",
-          "| Family | H | Trades | Days | Mean USD/oz | Mean ATR | Win % | Boot low 95% USD | 2020 | 2021 | 2022 | p perm | p Holm | Null runs trading | Pass |",
-          "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    ty = [str(y) for y in s["test_years"]]
+    L += ["", f"## The {s['n_configurations']} configurations (out-of-fold {ty[0]}–{ty[-1]}, net of cost)", "",
+          "| Family | H | Trades | Days | Mean USD/oz | Mean ATR | Win % | Boot low 95% USD | " + " | ".join(ty) +
+          " | p perm | p Holm | Null runs trading | Pass |",
+          "|---|---|---|---|---|---|---|---|" + "---|" * len(ty) + "---|---|---|---|"]
     for r in s["configurations"]:
         py = r["per_year"]
         L.append("| " + " | ".join([
             r["family"], r["horizon"], str(r["trades"]), str(r["days"]), _f(r["mean_usd"], 4),
             _f(r["mean_atr"], 4), _f(100 * r["win_rate"] if r["trades"] else float("nan"), 1),
             _f(r["boot_lower_usd"], 4),
-            *[f"{_f(py[y]['mean_usd'], 3)} ({py[y]['trades']})" for y in sorted(py)],
+            *[f"{_f(py[y]['mean_usd'], 3)} ({py[y]['trades']})" for y in ty],
             _f(r["p_perm"], 3), _f(r["p_holm"], 3), f"{r['null_runs_with_trades']}/{r['null_runs']}",
             "yes" if r.get("passes") else "no"]) + " |")
     L += ["", "Per-year cells: mean net USD/oz (trades). p perm = share of the shuffled runs with a "
@@ -381,7 +384,7 @@ def main(argv=None) -> int:
     cfg = DEFAULT
     df, spec, manifest = load_f1(Path(a.data), cfg.years)
     prep = prepare(df, spec, cfg)
-    write_audit(prep.audit, Path(a.data) / "audit_2019_2022.json")
+    write_audit(prep.audit, Path(a.data) / "audit_2020_2022.json")
     print(f"dataset rows {prep.ds.n}, days {prep.audit['n_days']}, quarantined {prep.audit['n_quarantined']}",
           flush=True)
 

@@ -13,14 +13,14 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from .config import F1_FIRST_FORBIDDEN_YEAR, F1_YEARS, MIN_PER_DAY
+from .config import F1_FIRST_FORBIDDEN_YEAR, F1_START_DATE, F1_YEARS, MIN_PER_DAY
 
 COLUMNS = ["time", "open", "high", "low", "close", "tick_volume", "spread_pts"]
 _EPOCH_YEAR_DAYS = np.datetime64("1970-01-01", "D")
 
 
 class DataDisciplineError(RuntimeError):
-    """Raised when F1 code would touch data outside 2019-2022."""
+    """Raised when F1 code would touch data outside 2020-07-01 .. 2022-12-31."""
 
 
 @dataclass(frozen=True)
@@ -62,7 +62,7 @@ def check_years_allowed(years) -> None:
     bad = [y for y in years if int(y) not in F1_YEARS]
     if bad:
         raise DataDisciplineError(
-            f"F1 may only use {F1_YEARS[0]}-{F1_YEARS[-1]}; refused years {bad}")
+            f"F1 may only use {F1_START_DATE}..{F1_YEARS[-1]}-12-31; refused years {bad}")
 
 
 def verify_manifest(data_dir: Path, years, manifest: dict | None = None) -> list[str]:
@@ -71,7 +71,7 @@ def verify_manifest(data_dir: Path, years, manifest: dict | None = None) -> list
     by_year = {int(f["year"]): f for f in manifest.get("files", [])}
     problems = []
     for f in manifest.get("files", []):
-        if int(f["year"]) >= F1_FIRST_FORBIDDEN_YEAR:
+        if int(f["year"]) not in F1_YEARS:
             problems.append(f"manifest lists forbidden year {f['year']}")
     for y in years:
         entry = by_year.get(int(y))
@@ -120,8 +120,13 @@ def load_f1(data_dir: Path, years=F1_YEARS, verify: bool = True):
 
 
 def assert_no_forbidden_rows(df: pd.DataFrame) -> None:
-    if len(df) and int(pd.DatetimeIndex(df["time"]).year.max()) >= F1_FIRST_FORBIDDEN_YEAR:
+    if not len(df):
+        return
+    t = pd.DatetimeIndex(df["time"])
+    if int(t.year.max()) >= F1_FIRST_FORBIDDEN_YEAR:
         raise DataDisciplineError("data contains bars dated 2023 or later; F1 must not see them")
+    if t.min() < pd.Timestamp(F1_START_DATE):
+        raise DataDisciplineError(f"data contains bars before {F1_START_DATE}; F1 must not use them")
 
 
 # ----------------------------------------------------------------------------- bars

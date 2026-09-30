@@ -13,17 +13,21 @@ import numpy as np
 import pandas as pd
 
 
-def trading_days(years, days_per_year=None, start_month=1):
+F1_START = "2020-07-01"
+
+
+def trading_days(years, days_per_year=None, start=F1_START):
+    """Weekdays of ``years`` on or after ``start`` (F1 data begins 2020-07-01)."""
     out = []
     for y in years:
-        d = pd.bdate_range(f"{y}-{start_month:02d}-01", f"{y}-12-31")
+        d = pd.bdate_range(max(pd.Timestamp(f"{y}-01-01"), pd.Timestamp(start)), f"{y}-12-31")
         if days_per_year:
             d = d[:days_per_year]
         out.extend(d)
     return out
 
 
-def make_m1(years=(2019, 2020, 2021, 2022), days_per_year=None, session=(6 * 60, 22 * 60),
+def make_m1(years=(2020, 2021, 2022), days_per_year=None, session=(6 * 60, 22 * 60),
             sigma=0.15, price0=1500.0, spread_pts=12, open_spread_pts=80, open_wide_min=7,
             planted=False, trigger_atr=2.0, drift_atr=0.3, seed=1, digits=2):
     rng = np.random.default_rng(seed)

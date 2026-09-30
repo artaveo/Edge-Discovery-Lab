@@ -11,17 +11,17 @@ from synth import flat_day, set_bar
 
 
 def _days():
-    # Mon 2019-01-07 .. Fri 2019-01-11; reference median spread 20 -> threshold 30
+    # Mon 2021-01-11 .. Fri 2021-01-15; reference median spread 20 -> threshold 30
     # (for d4 the reference is d3, whose [10:00, 21:30) median is 31 -> threshold 46.5)
-    d1 = flat_day("2019-01-07")                       # first day: no reference -> 16:30
-    d2 = flat_day("2019-01-08")
-    d2.loc[d2["time"] < pd.Timestamp("2019-01-08 01:10"), "spread_pts"] = 80   # wide open
-    d3 = flat_day("2019-01-09")
-    d3.loc[d3["time"] < pd.Timestamp("2019-01-09 17:00"), "spread_pts"] = 31   # just above 1.5x
-    d4 = flat_day("2019-01-10")
-    set_bar(d4, "2019-01-10 01:04", spread_pts=100)   # one wide bar breaks the first streak
-    d5 = flat_day("2019-01-11")
-    d5.loc[d5["time"] < pd.Timestamp("2019-01-11 01:03"), "spread_pts"] = 30   # == 1.5x is ok
+    d1 = flat_day("2021-01-11")                       # first day: no reference -> 16:30
+    d2 = flat_day("2021-01-12")
+    d2.loc[d2["time"] < pd.Timestamp("2021-01-12 01:10"), "spread_pts"] = 80   # wide open
+    d3 = flat_day("2021-01-13")
+    d3.loc[d3["time"] < pd.Timestamp("2021-01-13 17:00"), "spread_pts"] = 31   # just above 1.5x
+    d4 = flat_day("2021-01-14")
+    set_bar(d4, "2021-01-14 01:04", spread_pts=100)   # one wide bar breaks the first streak
+    d5 = flat_day("2021-01-15")
+    d5.loc[d5["time"] < pd.Timestamp("2021-01-15 01:03"), "spread_pts"] = 30   # == 1.5x is ok
     return pd.concat([d1, d2, d3, d4, d5], ignore_index=True)
 
 
@@ -43,11 +43,11 @@ def test_resume_time_rule_and_deadline():
 
 
 def test_reference_is_previous_day_10_to_2130_median():
-    d1 = flat_day("2019-01-07", spread_pts=100)
-    d1.loc[(d1["time"] >= pd.Timestamp("2019-01-07 10:00")) & (d1["time"] < pd.Timestamp("2019-01-07 21:30")),
+    d1 = flat_day("2021-01-11", spread_pts=100)
+    d1.loc[(d1["time"] >= pd.Timestamp("2021-01-11 10:00")) & (d1["time"] < pd.Timestamp("2021-01-11 21:30")),
            "spread_pts"] = 10                         # only [10:00, 21:30) counts -> median 10
-    d2 = flat_day("2019-01-08", spread_pts=16)       # 16 > 1.5 * 10 -> never normal -> 16:30
-    d3 = flat_day("2019-01-09", spread_pts=16)       # reference is d2 (median 16) -> 01:05
+    d2 = flat_day("2021-01-12", spread_pts=16)       # 16 > 1.5 * 10 -> never normal -> 16:30
+    d3 = flat_day("2021-01-13", spread_pts=16)       # reference is d2 (median 16) -> 01:05
     bars = build_bars(pd.concat([d1, d2, d3], ignore_index=True))
     r = resume_times(bars, DEFAULT)
     assert r.ref_spread[1] == 10 and r.ref_spread[2] == 16
@@ -75,15 +75,15 @@ def test_decision_moments_inside_window():
 
 
 def test_quarantined_and_weekend_days_have_no_moments():
-    sat = flat_day("2019-01-12")
+    sat = flat_day("2021-01-16")
     df = pd.concat([_days(), sat], ignore_index=True)
     bars = build_bars(df)
     r = resume_times(bars, DEFAULT)
-    q = int(pd.Timestamp("2019-01-09").value // 86_400_000_000_000)
+    q = int(pd.Timestamp("2021-01-13").value // 86_400_000_000_000)
     j = decision_moments(bars, r, [q], DEFAULT)
     days = set(bars.day5[j].tolist())
     assert q not in days
-    assert int(pd.Timestamp("2019-01-12").value // 86_400_000_000_000) not in days
+    assert int(pd.Timestamp("2021-01-16").value // 86_400_000_000_000) not in days
     assert len(days) == 4
 
 
@@ -112,8 +112,8 @@ def test_no_horizon_crosses_2130():
 
 
 def test_early_close_day_invalidates_horizons_beyond_last_bar():
-    d1 = flat_day("2019-01-07")
-    d2 = flat_day("2019-01-08", end="19:59")           # early close
+    d1 = flat_day("2021-01-11")
+    d2 = flat_day("2021-01-12", end="19:59")           # early close
     bars = build_bars(pd.concat([d1, d2], ignore_index=True))
     r = resume_times(bars, DEFAULT)
     j = decision_moments(bars, r, (), DEFAULT)

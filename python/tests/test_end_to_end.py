@@ -1,6 +1,6 @@
 """End-to-end: the machine finds a planted pattern and rejects noise (roadmap Section 8).
 
-Synthetic 2019-2022 (120 weekdays per year, 06:00-22:00 sessions) with XAUUSD-like
+Synthetic 2020-07-01..2022 (the F1 range; up to 120 weekdays per year, 06:00-22:00 sessions) with XAUUSD-like
 cost: spread 25-28 points (0.25-0.28 USD) plus commission, about 0.27 ATR60 per trade.
 
 * planted: after r60 > 2 ATR the next 60 min drift +0.6 ATR (mirror image below
@@ -8,7 +8,7 @@ cost: spread 25-28 points (0.25-0.28 USD) plus commission, about 0.27 ATR60 per 
   cost and so not an edge *net of cost*; 0.6 ATR is. -> must reach F1_PASS.
 * random walk with the same costs -> must reach F1_STOP.
 
-The whole pre-registered pipeline runs (M1-M3 x 4 horizons x 3 folds, B1 with a day
+The whole pre-registered pipeline runs (M1-M3 x 4 horizons x 2 folds, B1 with a day
 block shuffle, bootstrap, Holm); only the number of permutation runs is reduced to 20
 to keep the test fast (p = 0/20 is still resolvable below the Holm threshold).
 """
@@ -74,8 +74,19 @@ def test_random_walk_reaches_stop(noise):
 
 def test_baseline_b0_is_the_cost_floor(noise):
     _, res = noise
+    # Always long + always short at the same moments lose exactly the round-trip costs, so
+    # their mean is negative whatever the random path does. (Checking each side alone is
+    # not robust: with two out-of-fold years a random walk can drift enough at EOD to
+    # make one side positive by chance.)
+    by_h = {}
     for b in res["b0"]:
-        assert b["trades"] > 0 and b["mean_usd"] < 0          # always long / short lose the cost
+        assert b["trades"] > 0
+        by_h.setdefault(b["horizon"], {})[b["baseline"]] = b
+    for h, d in by_h.items():
+        lo, sh = d["B0 always long"], d["B0 always short"]
+        assert lo["trades"] == sh["trades"]
+        assert lo["mean_usd"] + sh["mean_usd"] < 0, (h, lo["mean_usd"], sh["mean_usd"])
+        assert min(lo["mean_usd"], sh["mean_usd"]) < 0
 
 
 def test_null_runs_are_deterministic(noise):

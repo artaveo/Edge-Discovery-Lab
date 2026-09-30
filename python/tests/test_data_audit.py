@@ -1,4 +1,4 @@
-"""Data loading, the 2019-2022 guard, the manifest check and the audit (roadmap Sections 0.3, 1)."""
+"""Data loading, the 2020-07-01..2022 guard, the manifest check and the audit (roadmap Sections 0.3, 1)."""
 import gzip
 import hashlib
 import json
@@ -41,8 +41,8 @@ def _write_export(tmp_path, frames: dict):
 
 @pytest.fixture()
 def export(tmp_path):
-    df = make_m1(years=(2019, 2020, 2021, 2022), days_per_year=3, seed=2)
-    frames = {y: df[df["time"].dt.year == y].reset_index(drop=True) for y in (2019, 2020, 2021, 2022)}
+    df = make_m1(years=(2020, 2021, 2022), days_per_year=3, seed=2)
+    frames = {y: df[df["time"].dt.year == y].reset_index(drop=True) for y in (2020, 2021, 2022)}
     return _write_export(tmp_path, frames), df
 
 
@@ -52,7 +52,8 @@ def test_load_roundtrip_and_manifest(export):
     assert len(got) == len(df) and spec.point == 0.01 and spec.digits == 2
     assert np.allclose(got["close"], df["close"].round(2))
     assert (got["time"].to_numpy() == df["time"].to_numpy()).all()
-    assert verify_manifest(data_dir, (2019, 2020, 2021, 2022)) == []
+    assert verify_manifest(data_dir, (2020, 2021, 2022)) == []
+    assert got["time"].min() >= pd.Timestamp("2020-07-01")
     assert verify_export.verify(data_dir) == []
 
 
@@ -73,6 +74,8 @@ def test_years_after_2022_are_refused(export, tmp_path):
     with pytest.raises(DataDisciplineError):
         check_years_allowed([2019, 2023])
     with pytest.raises(DataDisciplineError):
+        check_years_allowed([2019])
+    with pytest.raises(DataDisciplineError):
         load_f1(data_dir, years=(2022, 2023))
     # a file that sneaks a 2023 bar into the 2022 file is refused as well
     late = flat_day("2023-01-02", start="01:00", end="01:09")
@@ -90,29 +93,38 @@ def test_years_after_2022_are_refused(export, tmp_path):
 
 
 def test_audit_gaps_quarantine_duplicates_spreads_weekend():
-    ok = flat_day("2019-01-07")
-    small_gap = flat_day("2019-01-08")
-    small_gap = small_gap[~small_gap["time"].between("2019-01-08 10:00", "2019-01-08 10:09")]   # 10 missing
-    big_gap = flat_day("2019-01-09")
-    big_gap = big_gap[~big_gap["time"].between("2019-01-09 13:00", "2019-01-09 13:30")]       # 31 missing
-    edge_gap = flat_day("2019-01-10")
-    edge_gap = edge_gap[~edge_gap["time"].between("2019-01-10 13:00", "2019-01-10 13:29")]    # 30 missing
-    dup = flat_day("2019-01-11")
+    ok = flat_day("2021-01-11")
+    small_gap = flat_day("2021-01-12")
+    small_gap = small_gap[~small_gap["time"].between("2021-01-12 10:00", "2021-01-12 10:09")]   # 10 missing
+    big_gap = flat_day("2021-01-13")
+    big_gap = big_gap[~big_gap["time"].between("2021-01-13 13:00", "2021-01-13 13:30")]       # 31 missing
+    edge_gap = flat_day("2021-01-14")
+    edge_gap = edge_gap[~edge_gap["time"].between("2021-01-14 13:00", "2021-01-14 13:29")]    # 30 missing
+    dup = flat_day("2021-01-15")
     dup = pd.concat([dup, dup.iloc[[100, 101]]], ignore_index=True)
     dup.loc[5, "spread_pts"] = 0
     dup.loc[6, "spread_pts"] = -3
-    sat = flat_day("2019-01-12", start="10:00", end="10:30")
+    sat = flat_day("2021-01-16", start="10:00", end="10:30")
     rep = audit_m1(pd.concat([ok, small_gap, big_gap, edge_gap, dup, sat], ignore_index=True), DEFAULT)
     days = {r["date"]: r for r in rep["days"]}
-    assert days["2019-01-07"]["gaps_gt5"] == [] and not days["2019-01-07"]["quarantined"]
-    assert days["2019-01-08"]["gaps_gt5"] == [{"after": "09:59", "missing_min": 10}]
-    assert not days["2019-01-08"]["quarantined"]
-    assert days["2019-01-09"]["quarantined"] and days["2019-01-09"]["max_gap_min"] == 31
-    assert not days["2019-01-10"]["quarantined"] and days["2019-01-10"]["max_gap_min"] == 30
-    assert days["2019-01-11"]["duplicate_timestamps"] == 4 and rep["duplicate_timestamps_dropped"] == 2
-    assert days["2019-01-11"]["zero_spread_bars"] == 1 and days["2019-01-11"]["negative_spread_bars"] == 1
-    assert days["2019-01-12"]["weekend"] and not days["2019-01-12"]["quarantined"]
-    assert rep["quarantined_dates"] == ["2019-01-09"]
+    assert days["2021-01-11"]["gaps_gt5"] == [] and not days["2021-01-11"]["quarantined"]
+    assert days["2021-01-12"]["gaps_gt5"] == [{"after": "09:59", "missing_min": 10}]
+    assert not days["2021-01-12"]["quarantined"]
+    assert days["2021-01-13"]["quarantined"] and days["2021-01-13"]["max_gap_min"] == 31
+    assert not days["2021-01-14"]["quarantined"] and days["2021-01-14"]["max_gap_min"] == 30
+    assert days["2021-01-15"]["duplicate_timestamps"] == 4 and rep["duplicate_timestamps_dropped"] == 2
+    assert days["2021-01-15"]["zero_spread_bars"] == 1 and days["2021-01-15"]["negative_spread_bars"] == 1
+    assert days["2021-01-16"]["weekend"] and not days["2021-01-16"]["quarantined"]
+    assert rep["quarantined_dates"] == ["2021-01-13"]
     assert len(rep["excluded_days"]) == 2                  # the quarantined day and Saturday
-    assert days["2019-01-08"]["bars"] == 1376 - 10          # 01:00..23:55 = 1376 bars
-    assert rep["per_year"]["2019"]["quarantined"] == 1
+    assert days["2021-01-12"]["bars"] == 1376 - 10          # 01:00..23:55 = 1376 bars
+    assert rep["per_year"]["2021"]["quarantined"] == 1
+
+
+def test_bars_before_2020_07_01_are_refused(tmp_path):
+    early = flat_day("2020-06-30", start="01:00", end="01:09")
+    frames = {2020: pd.concat([early, flat_day("2020-07-01", start="01:00", end="01:09")], ignore_index=True)}
+    _write_export(tmp_path, frames)
+    with pytest.raises(DataDisciplineError):
+        load_f1(tmp_path, years=(2020,), verify=False)
+    assert verify_export.verify(tmp_path)

@@ -106,15 +106,15 @@ def test_permutation_pvalue():
 
 # ----------------------------------------------------------------------------- verdict
 
-def _row(mean, p, holm_p, lower, years=(0.1, 0.1, 0.1)):
+def _row(mean, p, holm_p, lower, years=(0.1, 0.1)):
     return {"mean_usd": mean, "p_perm": p, "p_holm": holm_p, "boot_lower_usd": lower,
-            "per_year": {str(y): {"trades": 10, "mean_usd": v} for y, v in zip((2020, 2021, 2022), years)}}
+            "per_year": {str(y): {"trades": 10, "mean_usd": v} for y, v in zip((2021, 2022), years)}}
 
 
 def test_verdict_rules():
-    ty = (2020, 2021, 2022)
+    ty = (2021, 2022)
     assert verdict([_row(0.2, 0.0, 0.0, 0.05)], ty) == "F1_PASS"
-    assert verdict([_row(0.2, 0.0, 0.0, 0.05, (0.1, -0.1, 0.3))], ty) == "F1_WEAK"   # one year negative
+    assert verdict([_row(0.2, 0.0, 0.0, 0.05, (0.1, -0.1))], ty) == "F1_WEAK"         # one year negative
     assert verdict([_row(0.2, 0.0, 0.0, -0.01)], ty) == "F1_WEAK"                    # bootstrap bound
     assert verdict([_row(0.2, 0.01, 0.12, 0.05)], ty) == "F1_WEAK"                   # fails Holm
     assert verdict([_row(0.2, 0.2, 1.0, 0.05)], ty) == "F1_STOP"

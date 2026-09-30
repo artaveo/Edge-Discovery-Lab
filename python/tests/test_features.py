@@ -23,7 +23,7 @@ def make_series(n_days=36, seed=5):
     """Random-walk M1 bars on weekdays, 01:00-22:59, with wide opening spreads,
     random gaps (missing bars) and a few late-opening days."""
     rng = np.random.default_rng(seed)
-    days = pd.bdate_range("2019-02-04", periods=n_days)
+    days = pd.bdate_range("2021-02-01", periods=n_days)
     frames = []
     p = 1300.0
     for k, d in enumerate(days):

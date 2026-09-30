@@ -47,7 +47,7 @@ python -m edgelab.report --data ../data --out ../research/f1 --jobs 4 \
 
 - Runtime estimate: ~23 s per walk-forward pass at full size (≈250k decision moments); 1 real +
   200 permutation passes ≈ 20–30 min on 4 cores, < 1 GB RAM per process.
-- Writes `data/audit_2019_2022.json`, `research/f1/report.md`, `research/f1/report.json`,
+- Writes `data/audit_2020_2022.json`, `research/f1/report.md`, `research/f1/report.json`,
   `research/f1/charts/<config>/*.svg` (only for passing configurations) and appends one line to
   `research/f1/trials_ledger.jsonl`. **Every run of the report is a counted trial**; a rerun with
   any change must stay in the ledger.
@@ -94,7 +94,7 @@ every report), and in the module docstrings. Changing any of them after results 
 12. `consec` is signed and resets on a flat close. `bars_since_high/low` count from the latest M5 bar
     at the extreme. `overlap12` = Σ ranges / (max high − min low) of the last 12 M5 bars.
 13. Warm-up: a moment with any missing feature is not in the dataset (about the first 15 trading
-    days of 2019).
+    days from 2020-07-01).
 
 **Models** (`python/edgelab/models.py`)
 14. Unit of activation, fitting and verdict: **net USD/oz**. ATR units are reported next to it.
@@ -108,6 +108,8 @@ every report), and in the module docstrings. Changing any of them after results 
 18. Family trading rule: a moment trades long if some active rule says long and none says short (and
     the mirror for short). A conflict means no trade. At most one trade per moment, family and horizon.
 19. Embargo: train moments on the last calendar day before the test year (Dec 31) are dropped.
+    Folds (data range update 2026-09-30, before any analysis): train 2020-07..2020-12 → test 2021;
+    train 2020-07..2021-12 → test 2022. Out-of-fold years: 2021 and 2022.
 
 **Baselines and statistics** (`models.py`, `stats.py`, `report.py`)
 20. B1 permutation: per fold, the train-year days are permuted. Each train day receives another train
@@ -133,5 +135,8 @@ every report), and in the module docstrings. Changing any of them after results 
 - The planted edge uses +0.6 ATR over 60 min after |r60| > 2 ATR. The 0.3 ATR in the roadmap's
   example is about the synthetic cost (≈ 0.27 ATR), so it is not an edge net of cost. The pattern is
   symmetric so it adds no unconditional drift.
+- The synthetic data covers the F1 range (2020-07-01 → 2022, up to 120 weekdays per year).
+- B0 on the random walk: always long + always short together must lose the round-trip cost at every
+  horizon (one side alone can be positive by chance when the random path drifts).
 - The random walk uses the same XAUUSD-like costs. Both end-to-end tests run the full pipeline with
   20 permutation runs instead of 200.

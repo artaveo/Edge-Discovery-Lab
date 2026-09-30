@@ -9,14 +9,15 @@ from edgelab.models import Dataset, day_block_permutation, fold_masks, permuted_
 
 
 def _all_days():
-    d = pd.bdate_range("2019-01-01", "2022-12-31")
+    d = pd.bdate_range("2020-07-01", "2022-12-31")
     return ((d - pd.Timestamp("1970-01-01")) // pd.Timedelta(days=1)).to_numpy().astype(np.int64)
 
 
 def test_folds_are_expanding_with_embargo():
     days = np.repeat(_all_days(), 3)                     # 3 moments per day
     year = year_of_day(days)
-    expected_train = {2020: {2019}, 2021: {2019, 2020}, 2022: {2019, 2020, 2021}}
+    expected_train = {2021: {2020}, 2022: {2020, 2021}}
+    assert [ty for _, ty in DEFAULT.folds] == [2021, 2022]          # two out-of-fold years
     for train_years, test_year in DEFAULT.folds:
         tr, te = fold_masks(days, train_years, test_year, DEFAULT)
         assert set(year[tr].tolist()) == expected_train[test_year]
@@ -34,18 +35,18 @@ def test_folds_are_expanding_with_embargo():
 
 
 def test_embargo_drops_exactly_the_last_calendar_day():
-    d0 = year_start_day(2020)
+    d0 = year_start_day(2021)
     days = np.array([d0 - 3, d0 - 2, d0 - 1, d0, d0 + 1])   # Dec 29, 30, 31, Jan 1, 2
-    tr, te = fold_masks(days, (2019,), 2020, DEFAULT)
+    tr, te = fold_masks(days, (2020,), 2021, DEFAULT)
     assert tr.tolist() == [True, True, False, False, False]
     assert te.tolist() == [False, False, False, True, True]
-    tr2, _ = fold_masks(days, (2019,), 2020, DEFAULT.with_(embargo_days=0))
+    tr2, _ = fold_masks(days, (2020,), 2021, DEFAULT.with_(embargo_days=0))
     assert tr2.tolist() == [True, True, True, False, False]
 
 
 def _toy(seed=0, n_days=40):
     rng = np.random.default_rng(seed)
-    base = year_start_day(2019) + 1
+    base = year_start_day(2021) + 1
     day, slot = [], []
     for k in range(n_days):
         s = np.sort(rng.choice(np.arange(10, 250), size=rng.integers(20, 60), replace=False))

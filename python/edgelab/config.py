@@ -20,8 +20,11 @@ from dataclasses import asdict, dataclass, field, replace
 
 SEED = 20260930
 
-# Data discipline (Section 0.3): F1 may only ever touch these years.
-F1_YEARS = (2019, 2020, 2021, 2022)
+# Data discipline (Section 0.3): F1 may only ever touch 2020-07-01 .. 2022-12-31.
+# Owner decision 2026-09-30 (roadmap Update Log "Data range changed"): FundedNext has no
+# real XAUUSD M1 history before mid-June 2020, so 2019 and 2020-01..06 are not used.
+F1_YEARS = (2020, 2021, 2022)
+F1_START_DATE = "2020-07-01"
 F1_FIRST_FORBIDDEN_YEAR = 2023
 
 MIN_PER_DAY = 1440
@@ -36,6 +39,7 @@ def hm(h: int, m: int = 0) -> int:
 class F1Config:
     # --- data / audit (Section 1)
     years: tuple = F1_YEARS
+    start_date: str = F1_START_DATE
     gap_report_min: int = 5          # a gap = missing M1 bars between two bars of a day
     gap_quarantine_min: int = 30     # gap > this inside the day's session -> quarantined day
 
@@ -59,7 +63,8 @@ class F1Config:
     hour_buckets: tuple = (hm(0), hm(8), hm(10), hm(13), hm(16, 30), hm(18), hm(21, 30))
 
     # --- walk-forward (Section 5)
-    folds: tuple = (((2019,), 2020), ((2019, 2020), 2021), ((2019, 2020, 2021), 2022))
+    # train 2020-07..2020-12 -> test 2021; train 2020-07..2021-12 -> test 2022
+    folds: tuple = (((2020,), 2021), ((2020, 2021), 2022))
     embargo_days: int = 1
     m1_bins: int = 10
     m2_bins: int = 5
