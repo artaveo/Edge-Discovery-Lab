@@ -2,7 +2,7 @@
 
 Owner folder `E:\Trade\Edge-Discovery-Lab` · repository `Edge-Discovery-Lab` (owner publishes it from GitHub Desktop) · commits go straight to `main` (no branches, no PRs).
 
-Status: F1 complete (`F1_WEAK`). F2 complete (`F2_FAIL`). **F3 complete: `F3_STOP`** (path-dependent exits on 2020-07 → 2022, Section 12). 2025 stays locked. Nothing further is authorized; the owner decides (F5 is in the backlog, Section 12.8).
+Status: F1 complete (`F1_WEAK`). F2 complete (`F2_FAIL`). **F3 complete: `F3_STOP`** (path-dependent exits on 2020-07 → 2022, Section 12). 2025 stays locked. **F5 (previous NY close level study, Section 13) is authorized** (owner decision 2026-09-30). Nothing beyond F5 is authorized.
 
 ---
 
@@ -388,11 +388,119 @@ Required tests:
 
 ### 12.8 Backlog (owner idea, not authorized yet)
 
-**F5 — NY-close level study.** The engine marks only the **previous New York close** as a level. When price reaches that level, it examines which entries, exits and reward ratios would have been profitable. The idea is to search for patterns **only at that event**, not at every moment. To be specified and pre-registered before any run if F3 fails and the owner authorizes it.
+**F5 — NY-close level study.** The engine marks only the **previous New York close** as a level. When price reaches that level, it examines which entries, exits and reward ratios would have been profitable. The idea is to search for patterns **only at that event**, not at every moment. → **Specified and authorized in Section 13.**
+
+---
+
+## 13. Phase F5 — the previous New York close level (owner decision 2026-09-30)
+
+### 13.1 Idea
+
+F1 and F3 looked at every 5-minute moment, so a behaviour that exists only **at one level** would be averaged away. F5 looks at **one event only**: price reaching the previous New York close. It measures what happens next for every way of trading it:
+- fade (reject);
+- breakout;
+- break and retest;
+- failed break.
+
+Each is combined with a grid of stops and rewards on M5 and M15. The owner wants to see where the best stop and reward are; the grid is reported in full, and multiple testing is controlled on the maximum (Section 13.6).
+
+### 13.2 The level and the day
+
+- **Level L(d)** = the **Bid close of the last M1 bar of the previous broker trading day** = the New York 17:00 close (the broker day boundary is aligned to NY 17:00). One level per day.
+- **Session:** the F1 window of day d, `[ResumeTime(d), 21:30)`. There are no events outside it; every trade is flat by the last M1 close ≤ 21:30 (EOD).
+- **Side of approach.** If the first decision bar of the day opens above L, price must come **down** to L (support test); if it opens below, it comes **up** (resistance test). The side is recorded and reported as a diagnostic split.
+- **Data:** the F1 export (2020-07 → 2022), used as is. Days are in DESIGN (discovery). Quarantined days are skipped.
+
+### 13.3 Signal timeframes
+
+Every family is evaluated on **M5** and on **M15**, built from M1 as in F1. The **touch** itself (families R1 and BR) is detected on M1 Bid.
+- `ATRtf` = the Wilder ATR(14) of the signal timeframe, taken at the last completed bar before the event.
+- `D` = a break distance: d × ATRtf with **d ∈ {0, 0.25, 0.5, 1.0}**. This answers "how far beyond the level counts as a break".
+
+### 13.4 Entry families (first occurrence per day, per family, per TF)
+
+The description is for a **downward approach** (price above L, support test); the upward approach is mirrored exactly. Long entries use Ask; a limit at L fills when **Bid low + bar spread ≤ L**, at exactly L.
+
+| Id | Family | Entry |
+|---|---|---|
+| **R1** | Fade at touch | Buy limit at **L**, live from ResumeTime; fills on the first touch |
+| **R2** | Fade after rejection | After the first touch, the first signal bar that **closes back above L** (the bar has touched L) → buy at that bar's close |
+| **B(d)** | Breakout at once | The first signal bar that **closes below L − D** → **sell** at its close |
+| **BR(d)** | Break, then retest | After B(d)'s break bar, a sell limit at **L** is live for up to 12 signal bars; it fills when the Bid reaches L |
+| **F(d)** | Failed break | After B(d)'s break bar, the first signal bar that **closes back above L** within 12 signal bars → **buy** at its close |
+
+- 1 + 1 + 4 + 4 + 4 = **14 entry variants per TF**.
+- Only the **first** trade of each variant per day counts, and at most one position per variant is open at a time.
+- An entry must happen before 21:00 so that it has at least 30 minutes to run.
+
+### 13.5 Exits (12 per entry)
+
+**Stop:**
+- ATR stops: s × ATRtf from entry, with **s ∈ {0.5, 1.0, 2.0}**;
+- **structural** stop: beyond the extreme of the event bar ± spread. For R1 that is the touch bar's low; for R2 the rejection bar's low; for B/BR the break bar's high; for F the lowest low since the break.
+
+**Target:** **k ∈ {1, 2, 3}** × the realized risk (entry → stop), solved **net of cost** so that a TP hit is at least k R after spread and commission, as in BTB 5.3.
+
+**Time stop:** EOD.
+
+**Path resolution:** on M1, conservative, exactly as in Section 12.3:
+- the SL wins a same-bar conflict;
+- short triggers use Ask;
+- gap fills are taken at the worse price.
+
+There are 4 stops × 3 targets = 12 exits, so 14 × 12 × 2 TF = **336 configurations**, all counted.
+
+### 13.6 Statistics and verdict (pre-registered)
+
+**Folds.** The F1 folds are used without training anything. F5 has **no model**: every configuration is a fixed rule. The years are:
+- **2020-07..12** as a warm-up for description only;
+- **2021** and **2022** as the two evaluation years.
+
+**Per configuration:**
+- trades per year;
+- win %, average win and loss R, mean net R per year and pooled;
+- day-block bootstrap lower 95%;
+- max drawdown R;
+- same-bar-conflict share;
+- approach-side and session splits (descriptive).
+
+**Reality check.** 200 day-block permutations of the **direction** of every trade (each day's trades are flipped together with probability ½, seed 20260930). This keeps the level/touch timing and breaks any directional edge. For each permutation, record the **best pooled mean net R among all 336 configurations**. The p-value of a configuration is the share of permutations whose best is ≥ its real mean.
+
+**Heatmaps.** For each entry family and TF, a 4 × 3 table (stop × target) of pooled mean net R. This is the owner's "best stop and reward" view. It is descriptive and is read together with the p-values.
+
+| Verdict | Rule |
+|---|---|
+| `F5_PASS` | At least one configuration has:<br>• mean net R > 0 in **2021 and in 2022** separately;<br>• bootstrap lower 95% > 0 (pooled 2021–2022);<br>• reality-check p < 0.05;<br>• ≥ 50 trades in each year |
+| `F5_WEAK` | Mean > 0 in both years and p < 0.10, but the full rule fails |
+| `F5_STOP` | Otherwise |
+
+`F5_PASS` allows, on owner approval only, a pre-registered one-shot on **2023–2024** with the passing configuration(s) frozen. The export already exists in `data/f2/`. 2025 stays locked.
+
+### 13.7 Steps
+
+| Step | Who | What |
+|---|---|---|
+| **A — code + tests** | cloud session | Write `python/edgelab/nyclose.py` (level, approach side, touch, the 14 entry variants, exits via `exits.py` where possible, one position per variant, direction-flip permutation, heatmaps, report) with tests. Produce no real-data result. Commit, push and say **"F5 Step A done"** |
+| **B — run** | cloud session | Run once on `data/*.csv.gz` (2020-07 → 2022). Write `research/f5/report.md` + `report.json` + heatmaps + the trials ledger, commit, push and say **"F5 done"** with a short Persian summary and the heatmaps explained simply |
+
+Required tests:
+- **Level:** L = the previous day's last M1 Bid close.
+- **Approach side** from the day's first bar.
+- **Limit fill at L** uses Bid + spread (long) and Bid (short).
+- **Each family on a hand-built day:** R1, R2, B(d) with each d, BR within and after 12 bars, and F.
+- **First occurrence per day;** no entry after 21:00; EOD close.
+- **Structural stop** per family; the TP is net of cost.
+- **Planted rejection edge:** a synthetic series where price bounces from L by +2 ATR → R1/R2 with k = 2 pass; B fails.
+- **Random walk:** the result must be `F5_STOP`.
+- **Direction-flip permutation:** determinism, and each day's trades flip together.
 
 ---
 
 # Update Log
+
+## 2026-09-30 — F5 authorized (owner decision)
+- One event only: price reaching the previous NY close. Fade (R1 limit, R2 rejection), breakout B(d), break-retest BR(d), failed break F(d); d ∈ {0, 0.25, 0.5, 1.0} × ATR; M5 and M15.
+- 12 exits (ATR 0.5/1/2 and structural stops × net 1/2/3 R targets); 336 fixed-rule configurations, no model; reality check on the maximum with direction-flip permutations; stop × target heatmaps.
 
 ## 2026-09-30 — Lab v2 / F3 authorized (owner decision)
 - F3 adds path-dependent exits (28 rules: SL/TP, SL only, trailing, breakeven+TP) to the F1 pipeline. Data, features, folds and models are unchanged; the owner chose not to extend data.
