@@ -2,7 +2,7 @@
 
 Owner folder `E:\Trade\Edge-Discovery-Lab` · repository `Edge-Discovery-Lab` (owner publishes it from GitHub Desktop) · commits go straight to `main` (no branches, no PRs).
 
-Status: F1 complete (`F1_WEAK`). **F2 complete: `F2_FAIL`** (one-shot test on 2023–2024, Section 11). Per the pre-registration the F1/F2 hypotheses are closed. 2025 stays locked. **Owner decision 2026-09-30: Lab v2 — Phase F3 (path-dependent exits) is authorized, Section 12.** Nothing beyond F3 is authorized.
+Status: F1 complete (`F1_WEAK`). F2 complete (`F2_FAIL`). **F3 complete: `F3_STOP`** (path-dependent exits on 2020-07 → 2022, Section 12). 2025 stays locked. Nothing further is authorized; the owner decides (F5 is in the backlog, Section 12.8).
 
 ---
 
@@ -445,3 +445,10 @@ Required tests:
   - the full 84-configuration grid end to end on a short slice.
 - Pre-registered details and one known property of the reality check are in `docs/EL_RunCard.md` (F3 Step B). The known property: the maximum is taken over all configurations, including ones with few trades, which makes p conservative.
 - **No F3 result was produced on real data.** `research/f3/` does not exist yet.
+
+## 2026-09-30 — F3 done (cloud session) — verdict `F3_STOP`
+- One run on the committed F1 data (`data/*.csv.gz`, 2020-07 → 2022; `verify_export` EXPORT OK), after all 87 tests passed. 149,450 moments, 84 configurations, 200 day-block permutations, runtime about 50 min. Ledger: `research/f3/trials_ledger.jsonl`.
+- **No configuration has a positive mean net R on the one-position count.** 52 of the 84 configurations traded; all 52 are negative over 2021–2022, and none is positive in both years. The best was M2 `SL2_TP3`: −0.045 R (2021 −0.041, 2022 −0.048), 2,717 trades, win rate 28%, average win +2.16 R, average loss −0.89 R, bootstrap lower bound −0.091, p = 1.00.
+- Most learned rules lose less than B0 with the same exit (e.g. `SL2_TP3`: always long −0.14 / −0.12 R, always short −0.07 / −0.06 R per trade), but not enough to cover the cost. Same-bar SL/TP conflicts are ≤ 0.1% of trades, so the pessimistic SL-first rule does not drive the result.
+- The null best (luckiest configuration per permutation) has median 0.00 R and a 95% quantile of 0.17 R. The conservative maximum statistic (see the Run Card's known property) did not decide anything, because no real configuration was above zero.
+- Report: `research/f3/report.md`, `report.json` (all rules). No charts, because no configuration passed.
