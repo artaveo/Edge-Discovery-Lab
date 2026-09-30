@@ -1,0 +1,23 @@
+{
+  "schema": "edgelab.export.v1",
+  "phase": "F2",
+  "symbol": "XAUUSD",
+  "server": "FundedNext-Server 2",
+  "company": "FundedNext Ltd",
+  "terminal_build": 6182,
+  "digits": 2,
+  "point": 0.01,
+  "contract_size": 100.00,
+  "timeframe": "M1",
+  "time": "broker server time, bar open, YYYY-MM-DD HH:MM:SS",
+  "columns": ["time", "open", "high", "low", "close", "tick_volume", "spread_pts"],
+  "year_from": 2023,
+  "year_to": 2024,
+  "exported_at_server": "2026-09-30 15:43:02",
+  "exported_at_utc": "2026-09-30 12:43:02",
+  "total_rows": 707718,
+  "files": [
+  {"file": "xauusd_m1_2023.csv.gz", "year": 2023, "rows": 352093, "first_bar": "2023-01-03 01:05:00", "last_bar": "2023-12-29 23:44:00", "sha256": "ad872abe38adf8d0fbaa7d94a589d687bd350f898152dbdfdaa23ff71a6b82c7", "bytes": 4690573, "csv_bytes": 20472006, "crc32": "18a255b7", "dropped_non_increasing": 0},
+  {"file": "xauusd_m1_2024.csv.gz", "year": 2024, "rows": 355625, "first_bar": "2024-01-01 22:12:00", "last_bar": "2024-12-31 23:59:00", "sha256": "65415baed98abced7c0e6ce5be54e5f89d59283ac41faad6e7248add28c4c17e", "bytes": 5081314, "csv_bytes": 20804139, "crc32": "a8cb3c1f", "dropped_non_increasing": 0}
+  ]
+}
