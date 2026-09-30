@@ -2,7 +2,7 @@
 
 Owner folder `E:\Trade\Edge-Discovery-Lab` · repository `Edge-Discovery-Lab` (owner publishes it from GitHub Desktop) · commits go straight to `main` (no branches, no PRs).
 
-Status: F1 complete (`F1_WEAK`). **F2 complete: `F2_FAIL`** (one-shot test on 2023–2024, Section 11). Per the pre-registration the project stops. 2025 stays locked. Nothing further is authorized.
+Status: F1 complete (`F1_WEAK`). **F2 complete: `F2_FAIL`** (one-shot test on 2023–2024, Section 11). Per the pre-registration the F1/F2 hypotheses are closed. 2025 stays locked. **Owner decision 2026-09-30: Lab v2 — Phase F3 (path-dependent exits) is authorized, Section 12.** Nothing beyond F3 is authorized.
 
 ---
 
@@ -293,7 +293,111 @@ The report gives, per hypothesis and year: trades, days, mean net (USD/oz and AT
 
 ---
 
+## 12. Lab v2 — Phase F3: path-dependent exits (owner decision 2026-09-30)
+
+### 12.1 Why
+
+F1 measured only **fixed-time exits**: enter at a decision moment, hold 30/60/120 min or to EOD, with no stop and no target. That only measures the average direction. Many real strategies earn from the **shape of the exit**: a small loss is cut and a large gain is allowed to run, so a 35–40% win rate can be profitable. F1 could not see this.
+
+F3 adds exactly one thing: **stop-loss / take-profit / trailing exits**. Everything else is F1 unchanged:
+- data 2020-07 → 2022 and the two folds;
+- decision moments, window and ResumeTime;
+- the 25 features, costs and quarantine;
+- model families M1/M2/M3;
+- the EOD time stop.
+
+The owner explicitly chose **not** to change the data range: an edge worth trading must show within these years.
+
+### 12.2 Exit grid (pre-registered, 28 exit rules)
+
+Entry is as in F1: at the decision moment's close. A long enters at Ask = Bid + spread(t) and a short at Bid. Let `A = ATR60(t)` (Section 3.4). The stop distance is `S = s × A`.
+
+| Family | Parameters | Count |
+|---|---|---|
+| **Fixed SL + TP** | s ∈ {0.5, 1.0, 1.5, 2.0}; TP at k × S from entry with k ∈ {1, 1.5, 2, 3}; else EOD | 16 |
+| **Fixed SL, no TP** | s ∈ {0.5, 1.0, 1.5, 2.0}; exit at SL or EOD | 4 |
+| **Trailing stop** | initial SL = s × A with s ∈ {1.0, 2.0}; after each M1 close the stop trails to (highest Bid close since entry − t × A) for a long (mirrored for a short) with t ∈ {1.0, 2.0}, never loosening; no TP; EOD time stop | 4 |
+| **Breakeven + TP** | s ∈ {1.0, 2.0}, TP k ∈ {2, 3}; the stop moves to entry + cost once price has gone +1 × S | 4 |
+
+Every exit also has the **EOD time stop** at the last M1 close ≤ 21:30.
+
+### 12.3 Path resolution and costs (conservative)
+
+- **Resolution.** The path is resolved on **M1 bars**:
+  - long SL / trailing stop triggers when the M1 **Bid low** ≤ stop;
+  - long TP triggers when the M1 **Bid high** ≥ TP;
+  - short SL triggers when **Bid high + spread** (Ask) ≥ stop;
+  - short TP triggers when **Bid low + spread** ≤ TP, using that bar's spread.
+- **Same-bar conflict.** If SL and TP are both touched in the same M1 bar, the **SL counts** (pessimistic). The report gives the share of such bars per exit rule.
+- **Fills.**
+  - A stop fills at the stop price, or at the bar open if the bar opened beyond it (gap), whichever is worse.
+  - A TP fills at the TP price.
+  - EOD fills at the Bid close (long) or the Ask close (short).
+- **Cost.** Spread at entry and the FundedNext commission (Section 3.3).
+- **Units.** Results are in USD/oz **and in R** (net result / (S + entry cost)).
+- **Known limitation.** M1 cannot order ticks inside a bar; the SL-first rule biases **against** us, which is acceptable. A final candidate would be re-checked tick-exactly in MT5 (TRE engine) before any live use.
+
+### 12.4 Models and search
+
+For each exit rule `e` and side, the target per moment is the net R of that exit. The M1 bins, M2 cells and M3 trees are learned exactly as in Section 5.2, on the net R of exit `e` instead of the time-exit result.
+- 28 exit rules × 3 families = **84 configurations**, all counted.
+- The Section 5.2 activation rules are unchanged: the train-year mean net > 0 and the bootstrap lower bound > 0, with the minimum counts as in F1.
+
+**Overlap rule.** F1 counted every 5-minute moment as a separate trade, so one day produced dozens of nearly identical trades.
+- F3 adds a realistic variant as the **primary** count: **one position at a time per configuration**. A signal is taken only when the previous trade of that configuration is closed.
+- The F1-style "all moments" count is reported as a secondary.
+
+### 12.5 Multiple testing: reality check on the maximum
+
+- With 84 configurations, Holm alone is weak. The null distribution is therefore built on the **maximum**, in the spirit of White's Reality Check.
+- Each of the 200 day-block permutations reruns all 84 configurations and records the **best** out-of-fold mean net R among them.
+- The permutation p-value of a configuration is the share of permutations whose best is ≥ that configuration's real mean.
+- The shuffle seed is `20260930`, as in F1.
+- The targets for all exits are computed once; each permutation only refits the models. This keeps the run time reasonable.
+
+### 12.6 F3 verdict (pre-registered)
+
+| Verdict | Rule |
+|---|---|
+| `F3_PASS` | At least one configuration meets **all** of these on the one-position-at-a-time count:<br>• out-of-fold mean net R > 0 in **2021 and in 2022** separately;<br>• day-block bootstrap lower 95% > 0 over 2021–2022;<br>• reality-check p < 0.05;<br>• it beats **B0 with the same exit** (always long and always short with that exit rule) in each year;<br>• at least 100 trades per year |
+| `F3_WEAK` | Some configuration has mean > 0 in both years and p < 0.10, but fails the full rule |
+| `F3_STOP` | Otherwise |
+
+- The report lists every configuration with its readable rules, trades per year, win rate, average win and loss in R, mean net R per year, the bootstrap bound, the p-value, the same-bar-conflict share and max drawdown in R.
+- For a passing configuration it also shows 10 example charts from entry to exit.
+- `F3_PASS` allows, on owner approval only, a pre-registered one-shot **F4** on 2023–2024 with the rules and exit frozen. 2023–2024 were seen in F2 only through the two H1/H2 rules, which is stated as a limitation. 2025 stays locked for the final test.
+
+### 12.7 Steps
+
+| Step | Who | What |
+|---|---|---|
+| **A — code + tests** | cloud session | Write `python/edgelab/exits.py` (the exit grid, path resolution, one-position-at-a-time), extend `models.py`/`stats.py`/`report.py` for the 84 configurations and the max-statistic permutation. Add tests (below). Commit, push and say **"F3 Step A done"**. No real-data result may be produced in Step A |
+| **B — run** | cloud session | Run once on the committed F1 data (`data/*.csv.gz`, 2020-07 → 2022; **no new export is needed**). Write `research/f3/report.md` + `report.json` + the trials ledger, commit, push and say **"F3 done"** with a short Persian summary |
+
+Required tests:
+- **Hand-computed paths:**
+  - long and short SL, TP, trailing and breakeven exits on small synthetic M1 series;
+  - the same-bar conflict counts SL;
+  - the gap fill;
+  - the short triggers use Ask;
+  - EOD.
+- **One-position-at-a-time:** signals during an open trade are skipped.
+- **Planted edge:** a synthetic series where a condition gives a +2R-then-reverse pattern (the time exit sees ~0, a TP of 2R sees profit) must reach `F3_PASS` with a TP exit and **fail** with the time exit.
+- **Random walk:** the result must be `F3_STOP`.
+- **Max-statistic permutation:** determinism, and the p-value bounds.
+
+### 12.8 Backlog (owner idea, not authorized yet)
+
+**F5 — NY-close level study.** The engine marks only the **previous New York close** as a level. When price reaches that level, it examines which entries, exits and reward ratios would have been profitable. The idea is to search for patterns **only at that event**, not at every moment. To be specified and pre-registered before any run if F3 fails and the owner authorizes it.
+
+---
+
 # Update Log
+
+## 2026-09-30 — Lab v2 / F3 authorized (owner decision)
+- F3 adds path-dependent exits (28 rules: SL/TP, SL only, trailing, breakeven+TP) to the F1 pipeline. Data, features, folds and models are unchanged; the owner chose not to extend data.
+- Primary count: one position at a time. Multiple testing: max-statistic permutation (reality check) over 84 configurations.
+- Backlog: F5 NY-close level study (owner idea).
 
 ## 2026-09-30 — Roadmap created (owner decision)
 - New project; no named setups. Market state → next move net of cost; patterns extracted from data.
