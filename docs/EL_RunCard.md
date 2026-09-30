@@ -1,4 +1,27 @@
-# Edge Discovery Lab — Run Card (Phase F1)
+# Edge Discovery Lab — Run Card
+
+---
+
+## F2 Step B — export 2023–2024 (Cowork on the owner's machine)
+
+Roadmap Section 11. The pre-registration is already committed. **Never export 2025 or later.**
+Data folder below = `%APPDATA%\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075`.
+
+1. GitHub Desktop: *Fetch origin → Pull*.
+2. Copy `MQL5\Scripts\EdgeLab\EL_ExportM1.mq5` (v2.00, F2) over the old copy in `<data folder>\MQL5\Scripts\EdgeLab\`.
+3. Compile it with the same MetaEditor command as in F1 Step B below (must show **0 errors, 0 warnings**).
+4. Keep *Max bars in chart = Unlimited* and Algo Trading on.
+5. Run the script with its defaults: XAUUSD, 2023 → 2024, folder `EdgeLab\data\f2`.
+   - The Experts log must end with `EL_ExportM1 DONE: <rows> rows in 2 files`. The script refuses any year outside 2023–2024 and never writes a bar dated 2025-01-01 or later.
+6. Copy `xauusd_m1_2023.csv.gz`, `xauusd_m1_2024.csv.gz` and `manifest.json` from `<data folder>\MQL5\Files\EdgeLab\data\f2\` into the repo folder `data\f2\`. Do **not** touch `data\` (F1).
+7. Run `%LOCALAPPDATA%\Programs\Python\Python312-arm64\python.exe python\tools\verify_export.py data\f2`. It must print `phase F2` and `EXPORT OK`.
+8. Commit only `data/f2/*` → push to `main`. Say **"F2 Step B done"**.
+
+Do not open, plot or summarise the 2023–2024 data. F2 is a one-shot test, and the first look happens in F2 Step C.
+
+---
+
+# Phase F1 (complete)
 
 Companion to `EdgeLab_Roadmap.md` Section 7. Step A (code) is done; this card is for Step B (export,
 owner's machine / Cowork) and Step C (analysis, cloud session).

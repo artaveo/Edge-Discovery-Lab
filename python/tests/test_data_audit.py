@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(
 import verify_export  # noqa: E402
 
 
-def _write_export(tmp_path, frames: dict):
+def _write_export(tmp_path, frames: dict, phase=None):
     """Write frames {year: df} like EL_ExportM1 does; returns the data dir."""
     files = []
     for y, df in frames.items():
@@ -35,6 +35,8 @@ def _write_export(tmp_path, frames: dict):
                       "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
     man = {"schema": "edgelab.export.v1", "symbol": "XAUUSD", "server": "FundedNext-Server 2",
            "terminal_build": 1, "digits": 2, "point": 0.01, "contract_size": 100.0, "files": files}
+    if phase:
+        man["phase"] = phase
     (tmp_path / "manifest.json").write_text(json.dumps(man))
     return tmp_path
 
@@ -128,3 +130,48 @@ def test_bars_before_2020_07_01_are_refused(tmp_path):
     with pytest.raises(DataDisciplineError):
         load_f1(tmp_path, years=(2020,), verify=False)
     assert verify_export.verify(tmp_path)
+
+
+# ----------------------------------------------------------------------------- F2 export check
+
+def _f2_export(root):
+    d = root / "data" / "f2"
+    d.mkdir(parents=True)
+    df = make_m1(years=(2023, 2024), days_per_year=3, seed=4)
+    frames = {y: df[df["time"].dt.year == y].reset_index(drop=True) for y in (2023, 2024)}
+    return _write_export(d, frames, phase="F2")
+
+
+def test_f2_export_verifies(tmp_path):
+    d = _f2_export(tmp_path)
+    assert verify_export.verify(d) == []
+
+
+def test_f2_refuses_2025_and_wrong_phase(tmp_path):
+    d = _f2_export(tmp_path)
+    # a 2025 file anywhere under data/ is refused
+    (tmp_path / "data" / "xauusd_m1_2025.csv.gz").write_bytes(b"")
+    assert any("FORBIDDEN" in e and "2025" in e for e in verify_export.verify(d))
+    (tmp_path / "data" / "xauusd_m1_2025.csv.gz").unlink()
+    # a 2025 bar hidden in the 2024 file is refused
+    d2 = tmp_path / "x" / "f2"
+    d2.mkdir(parents=True)
+    frames = {2024: pd.concat([flat_day("2024-12-31", start="01:00", end="01:09"),
+                               flat_day("2025-01-02", start="01:00", end="01:09")], ignore_index=True)}
+    _write_export(d2, frames, phase="F2")
+    assert any("outside 2024" in e for e in verify_export.verify(d2))
+    # F1 years in an F2 folder, or an F2 manifest outside f2/, are refused
+    d3 = tmp_path / "y" / "f2"
+    d3.mkdir(parents=True)
+    _write_export(d3, {2022: flat_day("2022-12-30", start="01:00", end="01:09")}, phase="F2")
+    assert verify_export.verify(d3)
+    d4 = tmp_path / "z"
+    d4.mkdir()
+    _write_export(d4, {2023: flat_day("2023-01-03", start="01:00", end="01:09")}, phase="F2")
+    assert any("phase" in e for e in verify_export.verify(d4))
+
+
+def test_f1_loader_still_refuses_f2_years(tmp_path):
+    d = _f2_export(tmp_path)
+    with pytest.raises(DataDisciplineError):
+        load_f1(d, years=(2023, 2024))

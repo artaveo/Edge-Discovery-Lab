@@ -1,0 +1,388 @@
+{
+ "id": "F2-H1",
+ "model": "M3 EOD tree, F1 fold 2 (test year 2022)",
+ "authoritative": "rules (applied to float64 features exactly as in F1 models.rules_direction); the sklearn arrays and the pickle are kept for inspection",
+ "train": {
+  "first_day": "2020-07-21",
+  "last_day": "2021-12-30",
+  "moments": 88578,
+  "days": 370,
+  "target": "net long USD/oz to EOD (last M1 close <= 21:30)"
+ },
+ "config_fingerprint": "7e945e717983b088",
+ "sklearn_version": "1.9.1",
+ "trading_rule": "every decision moment with all features finite and a valid EOD target: LONG if a LONG rule fires, SHORT if a SHORT rule fires (leaves are disjoint), exit EOD",
+ "rules": [
+  {
+   "id": "M3-EOD-2022-000",
+   "family": "M3",
+   "horizon": "EOD",
+   "direction": "short",
+   "text": "if pd_ret <= 1.154 and pd_range_rel <= 0.6848 and pd_ret <= 0.2328 then SHORT EOD",
+   "conditions": [
+    {
+     "feature": "pd_ret",
+     "lo": null,
+     "hi": 1.1535295248031616,
+     "lo_closed": true,
+     "hi_closed": true
+    },
+    {
+     "feature": "pd_range_rel",
+     "lo": null,
+     "hi": 0.6848121285438538,
+     "lo_closed": true,
+     "hi_closed": true
+    },
+    {
+     "feature": "pd_ret",
+     "lo": null,
+     "hi": 0.2328488603234291,
+     "lo_closed": true,
+     "hi_closed": true
+    }
+   ],
+   "train": {
+    "n": 12785,
+    "days": 53,
+    "leaf": 3,
+    "mean_long_usd": -1.43204138449746,
+    "mean_short_usd": 0.9308463745952305
+   }
+  },
+  {
+   "id": "M3-EOD-2022-001",
+   "family": "M3",
+   "horizon": "EOD",
+   "direction": "short",
+   "text": "if pd_ret <= 1.154 and pd_range_rel <= 0.6848 and 0.2328 < pd_ret then SHORT EOD",
+   "conditions": [
+    {
+     "feature": "pd_ret",
+     "lo": null,
+     "hi": 1.1535295248031616,
+     "lo_closed": true,
+     "hi_closed": true
+    },
+    {
+     "feature": "pd_range_rel",
+     "lo": null,
+     "hi": 0.6848121285438538,
+     "lo_closed": true,
+     "hi_closed": true
+    },
+    {
+     "feature": "pd_ret",
+     "lo": 0.2328488603234291,
+     "hi": null,
+     "lo_closed": false,
+     "hi_closed": false
+    }
+   ],
+   "train": {
+    "n": 2649,
+    "days": 11,
+    "leaf": 4,
+    "mean_long_usd": -11.976958722174382,
+    "mean_short_usd": 11.503615079260072
+   }
+  },
+  {
+   "id": "M3-EOD-2022-002",
+   "family": "M3",
+   "horizon": "EOD",
+   "direction": "long",
+   "text": "if pd_ret <= 1.154 and 0.6848 < pd_range_rel and pd_range_rel <= 0.8871 then LONG EOD",
+   "conditions": [
+    {
+     "feature": "pd_ret",
+     "lo": null,
+     "hi": 1.1535295248031616,
+     "lo_closed": true,
+     "hi_closed": true
+    },
+    {
+     "feature": "pd_range_rel",
+     "lo": 0.6848121285438538,
+     "hi": null,
+     "lo_closed": false,
+     "hi_closed": false
+    },
+    {
+     "feature": "pd_range_rel",
+     "lo": null,
+     "hi": 0.8871178030967712,
+     "lo_closed": true,
+     "hi_closed": true
+    }
+   ],
+   "train": {
+    "n": 18194,
+    "days": 76,
+    "leaf": 6,
+    "mean_long_usd": 1.4759922415389726,
+    "mean_short_usd": -1.9946332393888129
+   }
+  },
+  {
+   "id": "M3-EOD-2022-003",
+   "family": "M3",
+   "horizon": "EOD",
+   "direction": "short",
+   "text": "if pd_ret <= 1.154 and 0.6848 < pd_range_rel and 0.8871 < pd_range_rel then SHORT EOD",
+   "conditions": [
+    {
+     "feature": "pd_ret",
+     "lo": null,
+     "hi": 1.1535295248031616,
+     "lo_closed": true,
+     "hi_closed": true
+    },
+    {
+     "feature": "pd_range_rel",
+     "lo": 0.6848121285438538,
+     "hi": null,
+     "lo_closed": false,
+     "hi_closed": false
+    },
+    {
+     "feature": "pd_range_rel",
+     "lo": 0.8871178030967712,
+     "hi": null,
+     "lo_closed": false,
+     "hi_closed": false
+    }
+   ],
+   "train": {
+    "n": 51854,
+    "days": 217,
+    "leaf": 7,
+    "mean_long_usd": -1.3569680842858731,
+    "mean_short_usd": 0.8655981593983042
+   }
+  },
+  {
+   "id": "M3-EOD-2022-004",
+   "family": "M3",
+   "horizon": "EOD",
+   "direction": "long",
+   "text": "if 1.154 < pd_ret and d_asia_hi <= 0.4368 and weekday <= 1.5 then LONG EOD",
+   "conditions": [
+    {
+     "feature": "pd_ret",
+     "lo": 1.1535295248031616,
+     "hi": null,
+     "lo_closed": false,
+     "hi_closed": false
+    },
+    {
+     "feature": "d_asia_hi",
+     "lo": null,
+     "hi": 0.4368121325969696,
+     "lo_closed": true,
+     "hi_closed": true
+    },
+    {
+     "feature": "weekday",
+     "lo": null,
+     "hi": 1.5,
+     "lo_closed": true,
+     "hi_closed": true
+    }
+   ],
+   "train": {
+    "n": 831,
+    "days": 4,
+    "leaf": 10,
+    "mean_long_usd": 4.14915569328518,
+    "mean_short_usd": -4.597510973381449
+   }
+  },
+  {
+   "id": "M3-EOD-2022-005",
+   "family": "M3",
+   "horizon": "EOD",
+   "direction": "long",
+   "text": "if 1.154 < pd_ret and d_asia_hi <= 0.4368 and 1.5 < weekday then LONG EOD",
+   "conditions": [
+    {
+     "feature": "pd_ret",
+     "lo": 1.1535295248031616,
+     "hi": null,
+     "lo_closed": false,
+     "hi_closed": false
+    },
+    {
+     "feature": "d_asia_hi",
+     "lo": null,
+     "hi": 0.4368121325969696,
+     "lo_closed": true,
+     "hi_closed": true
+    },
+    {
+     "feature": "weekday",
+     "lo": 1.5,
+     "hi": null,
+     "lo_closed": false,
+     "hi_closed": false
+    }
+   ],
+   "train": {
+    "n": 1322,
+    "days": 9,
+    "leaf": 11,
+    "mean_long_usd": 10.822290002299559,
+    "mean_short_usd": -11.28366309906204
+   }
+  },
+  {
+   "id": "M3-EOD-2022-006",
+   "family": "M3",
+   "horizon": "EOD",
+   "direction": "long",
+   "text": "if 1.154 < pd_ret and 0.4368 < d_asia_hi then LONG EOD",
+   "conditions": [
+    {
+     "feature": "pd_ret",
+     "lo": 1.1535295248031616,
+     "hi": null,
+     "lo_closed": false,
+     "hi_closed": false
+    },
+    {
+     "feature": "d_asia_hi",
+     "lo": 0.4368121325969696,
+     "hi": null,
+     "lo_closed": false,
+     "hi_closed": false
+    }
+   ],
+   "train": {
+    "n": 943,
+    "days": 11,
+    "leaf": 12,
+    "mean_long_usd": 0.18588644581125915,
+    "mean_short_usd": -0.6317593654294992
+   }
+  }
+ ],
+ "sklearn_tree": {
+  "feature_names": [
+   "r5",
+   "r15",
+   "r60",
+   "r240",
+   "r_day",
+   "atr_rel20",
+   "range60",
+   "rv30_rel",
+   "pos_day",
+   "d_pdh",
+   "d_pdl",
+   "d_asia_hi",
+   "d_asia_lo",
+   "d_open",
+   "consec",
+   "bars_since_high",
+   "bars_since_low",
+   "overlap12",
+   "tv_rel",
+   "spread_rel",
+   "min_since_resume",
+   "hour_bucket",
+   "weekday",
+   "pd_ret",
+   "pd_range_rel"
+  ],
+  "children_left": [
+   1,
+   2,
+   3,
+   -1,
+   -1,
+   6,
+   -1,
+   -1,
+   9,
+   10,
+   -1,
+   -1,
+   -1
+  ],
+  "children_right": [
+   8,
+   5,
+   4,
+   -1,
+   -1,
+   7,
+   -1,
+   -1,
+   12,
+   11,
+   -1,
+   -1,
+   -1
+  ],
+  "feature": [
+   23,
+   24,
+   23,
+   -2,
+   -2,
+   24,
+   -2,
+   -2,
+   11,
+   22,
+   -2,
+   -2,
+   -2
+  ],
+  "threshold": [
+   1.1535295248031616,
+   0.6848121285438538,
+   0.2328488603234291,
+   -2.0,
+   -2.0,
+   0.8871178030967712,
+   -2.0,
+   -2.0,
+   0.4368121325969696,
+   1.5,
+   -2.0,
+   -2.0,
+   -2.0
+  ],
+  "value": [
+   -0.8536580897432717,
+   -1.0943313557923053,
+   -3.2419083034754412,
+   -1.4320413844974609,
+   -11.976958722174395,
+   -0.621145788602101,
+   1.4759922415389815,
+   -1.3569680842858771,
+   5.791442726925071,
+   8.246639927617263,
+   4.149155693285179,
+   10.822290002299553,
+   0.1858864458112592
+  ],
+  "n_node_samples": [
+   88578,
+   85482,
+   15434,
+   12785,
+   2649,
+   70048,
+   18194,
+   51854,
+   3096,
+   2153,
+   831,
+   1322,
+   943
+  ]
+ }
+}

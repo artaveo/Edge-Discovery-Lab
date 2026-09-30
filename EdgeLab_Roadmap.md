@@ -2,7 +2,7 @@
 
 Owner folder `E:\Trade\Edge-Discovery-Lab` · repository `Edge-Discovery-Lab` (owner publishes it from GitHub Desktop) · commits go straight to `main` (no branches, no PRs).
 
-Status: **Phase F1 (feasibility study) is authorized.** Nothing beyond F1 is authorized. After F1 the owner decides.
+Status: F1 is complete (`F1_WEAK`). **Phase F2 (one-shot test on 2023–2024) is authorized by the owner (2026-09-30)** and pre-registered in Section 11. 2025 stays locked. Nothing beyond F2 is authorized.
 
 ---
 
@@ -225,6 +225,74 @@ Same as the ProBTB roadmap Section 10:
 
 ---
 
+## 11. F2 — pre-registration (one-shot test on 2023–2024)
+
+Written and committed **before any 2023–2024 data is exported or seen** (owner decision 2026-09-30). Everything in this section is frozen. F2 is a **single shot**: the evaluation runs once. If the code crashes before any number is produced, the bug may be fixed and the run repeated. Once any F2 number exists, nothing changes, and there is no second hypothesis, threshold, horizon or model.
+
+### 11.1 Data
+
+- F2 exports and uses **only 2023-01-01 00:00 → 2024-12-31 23:59** (broker time), in `data/f2/`: `xauusd_m1_2023.csv.gz`, `xauusd_m1_2024.csv.gz`, `manifest.json` (same format as F1; `"phase": "F2"`).
+- **2025 and later stay locked.** They are never exported or looked at. 2026 remains "seen" and is never used to decide.
+- The F1 data (2020-07 → 2022) may be read **only as feature history** for the first 2023 days (previous day, 20-day medians, daily ATR, ResumeTime reference). No 2022 moment is scored.
+- The audit and quarantine rules are unchanged from Section 1 (a gap > 30 min inside the session quarantines the day). The window, targets, costs and features are unchanged: the F1 code (`python/edgelab/{window,targets,features}.py` at commit `872a326`) is used as is, with the F1 config (fingerprint `7e945e717983b088`). Symbol point and digits come from the F2 manifest.
+
+### 11.2 H1 — the second M3-EOD tree, exactly as it is
+
+- **Model:** the M3 EOD tree of F1 fold 2, fitted by F1 on **2020-07-21 → 2021-12-30** (88,578 moments, 370 days; Dec 31 embargoed). Its out-of-fold test year in F1 was 2022. It is **not refitted** on 2022 or on anything else.
+- **Files:**
+  - `research/f2/prereg/h1_m3_eod_tree.json` holds the rules (authoritative) and the sklearn tree arrays. SHA-256 `9d6f7f24d250452e959a3a1a70a01f60d05ecd1461c4c5145775cab3ebdf64f3`.
+  - `h1_m3_eod_tree.pkl` is the sklearn object (scikit-learn 1.9.1), kept for inspection. SHA-256 `b91630b68baac8fc9cf38dbb86a4ac4c9ecc6b5ffc5879de4045854ac109b0f9`.
+  - `freeze_models.py` rebuilt them from F1 data and asserted equality with `research/f1/report.json`.
+- **Trading rule:** at every decision moment with all 25 features finite and a valid EOD target, trade in the direction of the leaf the moment falls in. The leaves cover every moment. Exit is EOD (last M1 close ≤ 21:30). This is exactly the F1 rule, with overlapping moments counted independently.
+- **Rules** (thresholds at full precision; `pd_ret` = previous day return / daily ATR14; `pd_range_rel` = previous day range / 20-day median; `d_asia_hi` in ATR60 units; `weekday` 0 = Monday):
+
+| # | Rule id | If | Then | Train moments / days |
+|---|---|---|---|---|
+| 1 | `M3-EOD-2022-000` | `pd_ret` <= 1.1535295248031616 **and** `pd_range_rel` <= 0.6848121285438538 **and** `pd_ret` <= 0.2328488603234291 | **SHORT** | 12785 / 53 |
+| 2 | `M3-EOD-2022-001` | `pd_ret` <= 1.1535295248031616 **and** `pd_range_rel` <= 0.6848121285438538 **and** 0.2328488603234291 < `pd_ret` | **SHORT** | 2649 / 11 |
+| 3 | `M3-EOD-2022-002` | `pd_ret` <= 1.1535295248031616 **and** 0.6848121285438538 < `pd_range_rel` **and** `pd_range_rel` <= 0.8871178030967712 | **LONG** | 18194 / 76 |
+| 4 | `M3-EOD-2022-003` | `pd_ret` <= 1.1535295248031616 **and** 0.6848121285438538 < `pd_range_rel` **and** 0.8871178030967712 < `pd_range_rel` | **SHORT** | 51854 / 217 |
+| 5 | `M3-EOD-2022-004` | 1.1535295248031616 < `pd_ret` **and** `d_asia_hi` <= 0.4368121325969696 **and** `weekday` <= 1.5 | **LONG** | 831 / 4 |
+| 6 | `M3-EOD-2022-005` | 1.1535295248031616 < `pd_ret` **and** `d_asia_hi` <= 0.4368121325969696 **and** 1.5 < `weekday` | **LONG** | 1322 / 9 |
+| 7 | `M3-EOD-2022-006` | 1.1535295248031616 < `pd_ret` **and** 0.4368121325969696 < `d_asia_hi` | **LONG** | 943 / 11 |
+
+### 11.3 H2 — the shared "previous-day range" rule
+
+- Thresholds are copied exactly from the second tree. File: `research/f2/prereg/h2_range_rule.json`, SHA-256 `e266849a75741e8b286f8a7d9e02e4e39cfd0f4460667abd24c2372c60a83015`.
+  - `pd_range_rel` ≤ **0.6848121285438538** → **no trade**
+  - 0.6848121285438538 < `pd_range_rel` ≤ **0.8871178030967712** → **LONG** to EOD
+  - `pd_range_rel` > 0.8871178030967712 → **SHORT** to EOD
+- **One trade per day.** The entry is at the day's first decision moment, i.e. the first M5 close ≥ ResumeTime(d), which is at most 4 minutes after ResumeTime. The exit is EOD. Costs are as in Section 3.3.
+- **Eligible day:** a non-quarantined weekday whose first decision moment has a finite `pd_range_rel` and a valid EOD target. No other condition applies (the tree's `pd_ret ≤ 1.154` branch is deliberately dropped).
+
+### 11.4 Statistics and pass rule
+
+For each hypothesis, over 2023 and 2024 (unit: net USD/oz per trade):
+
+1. **Mean net > 0 in 2023 and > 0 in 2024**, each year separately, with at least one trade in each year.
+2. **Bootstrap:** the one-sided day-block bootstrap lower 95% bound of the mean over 2023–2024 must be > 0 (10,000 reps, seed 20260930, whole trade days as blocks, as in F1).
+3. **Beats both baselines in each year:** the hypothesis' mean > the mean of B0 "always long" **and** > the mean of B0 "always short", in 2023 and in 2024 separately.
+   - H1's baselines use the same set of moments H1 trades (all eligible decision moments).
+   - H2's baselines take one trade per **eligible** day (including the days H2 skips) at the same entry moment, to EOD.
+4. **Holm over the 2 hypotheses** at α = 0.05. Each hypothesis' p is the one-sided day-block bootstrap p = share of the 10,000 bootstrap means ≤ 0 (the same resamples as in rule 2). Holm: the smaller p < 0.025, the larger p < 0.05.
+
+| Verdict | Rule |
+|---|---|
+| `F2_PASS` | At least one hypothesis meets **all** of rules 1–4 (the report names which) |
+| `F2_FAIL` | Otherwise. **The project stops** |
+
+The report gives, per hypothesis and year: trades, days, mean net (USD/oz and ATR units), win rate, long/short share, B0 means, the bootstrap bound, the raw p and the Holm p. It also gives 10 example charts per hypothesis, chosen at random with seed [20260930, 5].
+
+### 11.5 F2 steps
+
+| Step | Who | What |
+|---|---|---|
+| **A — pre-registration** | cloud session | This section, the frozen H1/H2 files, and the export script and `verify_export.py` limited to 2023–2024 → `data/f2/`. Say **"F2 Step A done"** |
+| **B — export** | Cowork | Compile `EL_ExportM1.mq5` (0 errors / 0 warnings), run it with its defaults (2023–2024, `EdgeLab\\data\\f2`), run `verify_export.py data/f2` (must print `EXPORT OK`), commit `data/f2/*` only. **Never 2025 or later.** Say **"F2 Step B done"** |
+| **C — one-shot evaluation** | cloud session | First write `python/edgelab/f2.py` and its tests on synthetic data (a planted H2 edge → pass; random walk → fail; frozen-file SHA-256 check; the 2025 guard) and commit them **before** loading 2023–2024. Then run once, write `research/f2/report.md` + `report.json` + charts, commit and push, and say **"F2 Step C done"** with the verdict |
+
+---
+
 # Update Log
 
 ## 2026-09-30 — Roadmap created (owner decision)
@@ -249,3 +317,8 @@ Same as the ProBTB roadmap Section 10:
 - One run, one trial (ledger `research/f1/trials_ledger.jsonl`, fingerprint `7e945e717983b088`), 200 permutation runs. No parameter was changed after the result.
 - Result: **no configuration passes.** M3 H120 (+0.28 USD/oz, p = 0.000) and M3 EOD (+0.59 USD/oz, p = 0.035) are positive with a small permutation p, but the bootstrap lower bound is negative and M3 H120 loses in 2022, so the verdict is `F1_WEAK`. The permutation p compares against shuffled rules, which lose about the cost, so a small p here means "loses less than chance", not "profitable". No chart snapshots were written, because the roadmap draws them only for passing configurations.
 - Files: `research/f1/{report.md,report.json,trials_ledger.jsonl}`, `data/audit_2020_2022.json`. The owner decides what comes next.
+
+## 2026-09-30 — F2 authorized; F2 Step A done (cloud session)
+- Owner decision: F2 = a one-shot test of two frozen hypotheses on 2023–2024 (Section 11). 2025 stays locked.
+- H1 = the second F1 M3-EOD tree exactly as fitted in F1. Its training data is **2020-07-21 → 2021-12-30**, and 2022 was its out-of-fold test year; it is not refitted on 2022. H2 = the shared previous-day range rule with the second tree's exact thresholds. Model files and their SHA-256 are in `research/f2/prereg/`.
+- `EL_ExportM1.mq5` now exports only 2023–2024 to `EdgeLab\data\f2` (hard guard: nothing before 2023-01-01 or from 2025-01-01 on). `verify_export.py` checks F1 (`data/`) or F2 (`data/f2/`) by phase. `config/el_export.ini` and the Run Card are updated. No 2023–2024 data exists in the repo yet.

@@ -1,0 +1,18 @@
+{
+ "id": "F2-H2",
+ "feature": "pd_range_rel",
+ "definition": "previous trading day's range (high - low) / median daily range of the 20 trading days before it (edgelab.features, unchanged)",
+ "thresholds": {
+  "small_max": 0.6848121285438538,
+  "medium_max": 0.8871178030967712
+ },
+ "rule": {
+  "pd_range_rel <= small_max": "NO TRADE",
+  "small_max < pd_range_rel <= medium_max": "LONG",
+  "medium_max < pd_range_rel": "SHORT"
+ },
+ "entry": "the day's first decision moment (first M5 close >= ResumeTime(d)); long pays spread(t), short pays spread at exit; commission 2 x 0.000016 x Bid_close(t)",
+ "exit": "EOD: last M1 close <= 21:30 (F1 targets.py)",
+ "trades_per_day": 1,
+ "source": "F1 fold-2 M3 EOD tree (rules M3-EOD-2022-002 / -003 and -000 / -001 region), thresholds copied exactly"
+}

@@ -1,11 +1,16 @@
-"""Verify the F1 export (Step B) with the Python standard library only.
+"""Verify an export (F1 or F2 Step B) with the Python standard library only.
 
 Runs on the owner's laptop (no numpy/pandas needed)::
 
-    python python/tools/verify_export.py data
+    python python/tools/verify_export.py data        # F1: 2020-07-01 .. 2022
+    python python/tools/verify_export.py data/f2     # F2: 2023 .. 2024 (never 2025+)
 
-Checks, for every file in data/manifest.json:
-  * only years 2020-2022 are listed and present (2020 starts 2020-07-01); no data/*_2023+ file exists;
+The phase is F2 when the folder is named ``f2`` or the manifest says ``"phase": "F2"``
+(both must agree), otherwise F1.
+
+Checks, for every file in the manifest:
+  * only the phase's years are listed and present (F1: 2020-2022 from 2020-07-01;
+    F2: 2023-2024); no file of a forbidden year exists (for F2: no 2025+ file anywhere under data/);
   * SHA-256 of the .gz matches the manifest; the gzip stream decompresses (CRC ok);
   * the header is time,open,high,low,close,tick_volume,spread_pts;
   * row count, first and last bar match the manifest;
@@ -25,8 +30,14 @@ import sys
 import zlib
 from pathlib import Path
 
-ALLOWED = {2020, 2021, 2022}
-F1_START = "2020-07-01"   # owner decision 2026-09-30: full FundedNext M1 history starts mid-June 2020
+PHASES = {
+    # owner decision 2026-09-30: full FundedNext M1 history starts mid-June 2020
+    "F1": {"years": {2020, 2021, 2022}, "start": "2020-07-01"},
+    # roadmap Section 11.1: F2 = 2023-2024 only; 2025 is the locked final test
+    "F2": {"years": {2023, 2024}, "start": "2023-01-01"},
+}
+ALLOWED = PHASES["F1"]["years"]
+F1_START = PHASES["F1"]["start"]
 HEADER = ["time", "open", "high", "low", "close", "tick_volume", "spread_pts"]
 
 
@@ -38,7 +49,7 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
-def check_file(path: Path, entry: dict) -> list[str]:
+def check_file(path: Path, entry: dict, start: str = F1_START) -> list[str]:
     errs = []
     year = int(entry["year"])
     if sha256(path).lower() != str(entry["sha256"]).lower():
@@ -62,8 +73,8 @@ def check_file(path: Path, entry: dict) -> list[str]:
                 if not t.startswith(f"{year}-"):
                     errs.append(f"{path.name}: row {rows} time {t} outside {year}")
                     break
-                if t < F1_START:
-                    errs.append(f"{path.name}: row {rows} time {t} before the F1 start {F1_START}")
+                if t < start:
+                    errs.append(f"{path.name}: row {rows} time {t} before the phase start {start}")
                     break
                 if prev is not None and t <= prev:
                     errs.append(f"{path.name}: row {rows} time {t} not after {prev}")
@@ -91,28 +102,42 @@ def check_file(path: Path, entry: dict) -> list[str]:
 
 def verify(data_dir: Path) -> list[str]:
     errs = []
+    data_dir = Path(data_dir)
     man_path = data_dir / "manifest.json"
     if not man_path.exists():
         return [f"{man_path} missing"]
     man = json.loads(man_path.read_text(encoding="utf-8"))
-    print(f"manifest: {man.get('symbol')} on {man.get('server')}, build {man.get('terminal_build')}, "
+    by_dir = "F2" if data_dir.name.lower() == "f2" else "F1"
+    phase = str(man.get("phase", "F1")).upper()
+    if phase != by_dir:
+        errs.append(f"manifest phase {phase} does not match folder {data_dir.name} ({by_dir})")
+    if phase not in PHASES:
+        return errs + [f"unknown phase {phase}"]
+    allowed, start = PHASES[phase]["years"], PHASES[phase]["start"]
+    print(f"phase {phase}; manifest: {man.get('symbol')} on {man.get('server')}, build {man.get('terminal_build')}, "
           f"digits {man.get('digits')}, point {man.get('point')}, contract {man.get('contract_size')}")
     years = [int(f["year"]) for f in man.get("files", [])]
-    if set(years) != ALLOWED:
-        errs.append(f"manifest years {sorted(years)} != 2020-2022")
+    if set(years) != allowed:
+        errs.append(f"manifest years {sorted(years)} != {min(allowed)}-{max(allowed)}")
     for p in data_dir.glob("*.csv*"):
         m = re.search(r"(\d{4})\.csv", p.name)
-        if m and int(m.group(1)) not in ALLOWED:
-            errs.append(f"FORBIDDEN FILE {p.name}: F1 must not export {m.group(1)} - delete it, do not commit")
+        if m and int(m.group(1)) not in allowed:
+            errs.append(f"FORBIDDEN FILE {p.name}: {phase} must not export {m.group(1)} - delete it, do not commit")
+    if phase == "F2":
+        # 2025 is the locked final test: no 2025+ file may exist anywhere under data/
+        for p in data_dir.parent.rglob("*.csv*"):
+            m = re.search(r"(\d{4})\.csv", p.name)
+            if m and int(m.group(1)) >= 2025:
+                errs.append(f"FORBIDDEN FILE {p}: 2025 and later are locked - delete it, do not commit")
     for entry in man.get("files", []):
-        if int(entry["year"]) not in ALLOWED:
+        if int(entry["year"]) not in allowed:
             errs.append(f"manifest lists forbidden year {entry['year']}")
             continue
         path = data_dir / entry["file"]
         if not path.exists():
             errs.append(f"{entry['file']} missing")
             continue
-        errs += check_file(path, entry)
+        errs += check_file(path, entry, start)
     return errs
 
 
