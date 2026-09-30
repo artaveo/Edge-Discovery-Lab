@@ -231,3 +231,8 @@ Same as the ProBTB roadmap Section 10:
 ## 2026-09-30 — Roadmap created (owner decision)
 - New project; no named setups. Market state → next move net of cost; patterns extracted from data.
 - F1 = feasibility on XAUUSD 2019–2022 with walk-forward, permutation baseline and Holm. 2023–2024 reserved for F2; 2025 locked final; 2026 seen.
+
+## 2026-09-30 — Step A done (cloud session)
+- Code: `MQL5/Scripts/EdgeLab/EL_ExportM1.mq5` (2019–2022 only, gzip CSV + manifest with SHA-256), `config/el_export.ini`, `python/edgelab/{config,data,audit,window,targets,features,models,stats,report}.py`, `python/tools/verify_export.py` (stdlib-only check for Step B), `docs/EL_RunCard.md`.
+- Blocking tests (Section 8) in `python/tests/`, all passing: window, hand-computed targets, feature brute force + look-ahead + ATR scaling, folds/embargo, day-block permutation, Holm/bootstrap, end-to-end (planted edge → `F1_PASS`, random walk → `F1_STOP`).
+- Details the roadmap left open are pre-registered in `docs/EL_RunCard.md` ("Pre-registered details") before any data exists.
