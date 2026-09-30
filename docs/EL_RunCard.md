@@ -2,6 +2,63 @@
 
 ---
 
+## F5 Step B — one run on the F1 data (cloud session)
+
+Roadmap Section 13. No new export: the committed F1 files `data/*.csv.gz` (2020-07 → 2022) are used.
+
+```
+cd python
+python -m pytest -q                       # all tests must pass (113 at F5 Step A)
+python -m edgelab.nyclose --data ../data --out ../research/f5 --tests-summary "<N passed in Xs>"
+```
+
+- The run refuses to start if `research/f5/report.json` exists. Every run is appended to `research/f5/trials_ledger.jsonl`.
+- It writes `research/f5/report.md`, `report.json`, `heatmap_M5.svg`, `heatmap_M15.svg`, and charts for passing configurations only.
+- Runtime on synthetic data of the same size: under a minute. Commit, push and say **"F5 done"**.
+
+**F5 pre-registered details** (frozen in Step A, before any F5 run; full text in the docstring of `python/edgelab/nyclose.py`):
+1. **Level and day.** L = the last M1 Bid close of the previous weekday with bars. A day is used only if it has a previous day, is not quarantined, and has a bar after ResumeTime up to 21:30.
+2. **Approach side of an event with break distance D.** It is the side of L of the latest signal-bar close before the event bar that lies outside (L − D, L + D). For R1/R2 D = 0, so this is any close ≠ L. If there is none, the side of the day's first M1 open is used. A slow break through the band is therefore still a break from above. For R1, the side comes from the last signal bar completed at or before the touch bar's open.
+3. **ATRtf** = Wilder ATR(14) of the continuous M5/M15 series at the last signal bar closed at or before the event bar's open. BR and F use the ATR of their break throughout.
+4. **Touch** = Bid low + that bar's spread ≤ L (from above) / Bid high ≥ L (from below).
+   - R1 = limit at L on the first touching M1 bar.
+   - R2 = the first signal bar that touched and closes back across.
+   - B(d) = the first close beyond L ∓ D.
+   - BR(d) = a limit at L on the M1 bars up to the close of the 12th signal bar after the break.
+   - F(d) = the first of the next 12 signal bars that closes back across L.
+   - Entries (close times / fill-bar opens) must fall after ResumeTime and before 21:00.
+5. **Several events per day.** A configuration accepts an event when it has no open position or live BR/F window, and a signal bar has closed ≥ 0.5 × ATRtf (of the previous event) away from L since the previous event. The event bar must open at or after both. The test number is the event's index within the day for that configuration. A break whose BR/F follow-up never comes is an event without a trade.
+6. **Stops.**
+   - ATR stops are measured from the entry price.
+   - Structural stops: R1 = fill-bar Bid low; R2 = rejection-bar low; B/BR = break-bar Ask high; F = lowest low since the break (mirrored for shorts).
+   - A structural stop closer than 0.1 × ATRtf, or on the wrong side, is widened to 0.1 × ATRtf.
+   - R unit = |entry − stop| + commission. TP = entry ± (k × R unit + commission), so a TP nets exactly +k R.
+7. **Limit fills.** The fill bar is checked for the stop only when the stop is known before the fill (ATR stops, BR structural), and never for the TP. Close entries start the path on the next M1 bar. The path rules follow Section 12.3; a test checks them against `exits.py`.
+8. **Reality check.** 200 permutations with one coin per 2021–2022 day, shared by all 336 configurations.
+   - A flipped trade = the opposite side at the same entry moment (limit entries at L, close entries at the opposite side's price), with the same stop distance and k, on the same path.
+   - The accepted events are kept.
+   - A configuration without trades scores 0.
+9. **Known property (seen on synthetic data, not changed).** Section 13.6 takes the maximum over all 336 configurations with no minimum trade count.
+   - A configuration with few trades and a genuinely large edge keeps a high mean in the permutations where few of its days are flipped, so it raises the null maximum.
+   - A k = 1 or k = 2 configuration can never exceed +k R per trade. When some small configuration's edge is larger than that, k = 1 or k = 2 configurations cannot reach p < 0.05.
+   - This makes the verdict conservative, as in F3.
+
+**Synthetic F5 tests** (`python/tests/test_nyclose.py`, 26 tests):
+- hand-built days for the level, the approach side, limit fills (Bid + spread / Bid), every family and d, BR within and after 12 bars, F, structural stops and their floor, a TP net of cost, re-arm and test numbers, an open position blocking events, EOD, and no entry at or after 21:00;
+- the path rules against `exits.py`;
+- the direction-flip permutation (determinism, one coin per day);
+- the planted rejection edge: price touching L bounces 2 × ATR away from it (every weekday of 2020-07 → 2022).
+  - R1/R2 with k = 2 pass, and no breakout configuration passes.
+  - This held on seeds 1–3 when the test was written; the test uses seed 1.
+- random walk → `F5_STOP`;
+- 336 configurations, heatmaps and the report.
+
+40 permutations are used in the tests instead of 200.
+
+---
+
+# Phase F3 (complete)
+
 ## F3 Step B — one run on the F1 data (cloud session)
 
 Roadmap Section 12. No new export: the committed F1 files `data/*.csv.gz` (2020-07 → 2022) are used.

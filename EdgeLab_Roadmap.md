@@ -569,3 +569,15 @@ Required tests:
 - Most learned rules lose less than B0 with the same exit (e.g. `SL2_TP3`: always long −0.14 / −0.12 R, always short −0.07 / −0.06 R per trade), but not enough to cover the cost. Same-bar SL/TP conflicts are ≤ 0.1% of trades, so the pessimistic SL-first rule does not drive the result.
 - The null best (luckiest configuration per permutation) has median 0.00 R and a 95% quantile of 0.17 R. The conservative maximum statistic (see the Run Card's known property) did not decide anything, because no real configuration was above zero.
 - Report: `research/f3/report.md`, `report.json` (all rules). No charts, because no configuration passed.
+
+## 2026-09-30 — F5 Step A done (cloud session)
+- Code: `python/edgelab/nyclose.py`.
+  - The level L (the previous day's last M1 Bid close) and the approach side per event.
+  - M5/M15 signal bars with their ATR.
+  - The 14 entry variants (R1, R2, B(d), BR(d), F(d) with d ∈ {0, 0.25, 0.5, 1}).
+  - Several events per day, with the re-arm rule and test numbers, one position per configuration, and no entry after 21:00.
+  - 12 exits: ATR 0.5/1/2 or structural stop × k 1/2/3, with the TP net of cost. The M1 path follows the Section 12.3 rules and is checked against `exits.py`.
+  - 336 configurations, the direction-flip permutation with the maximum statistic, the verdict (Section 13.6), 4 × 3 stop × target heatmaps (tables + SVG), the report, the one-run guard and the ledger.
+- Tests (Section 13.7): 26 new, 113 in total, all passing. The planted rejection edge gives `F5_PASS` with R1/R2 k = 2 and no breakout passing; the random walk gives `F5_STOP`.
+- Pre-registered details and one known property of the reality check (the maximum over configurations with few trades makes p conservative, especially for k = 1 and 2) are in `docs/EL_RunCard.md` (F5 Step B).
+- **No F5 result was produced on real data.** `research/f5/` does not exist yet.

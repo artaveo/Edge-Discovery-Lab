@@ -202,3 +202,71 @@ def make_m1_f3(years=(2020, 2021, 2022), days_per_year=None, session=(6 * 60, 22
     df["high"] = df[["open", "high", "low", "close"]].max(axis=1)
     df["low"] = df[["open", "high", "low", "close"]].min(axis=1)
     return df
+
+
+def make_m1_nyclose(years=(2020, 2021, 2022), days_per_year=None, session=(60, 23 * 60), sigma=0.3,
+                    price0=1800.0, spread_pts=25, open_spread_pts=80, open_wide_min=7, planted=False,
+                    bounce_atr=2.5, bounce_min=20, rearm_atr=1.0, seed=1, digits=2):
+    """F5 synthetic data (roadmap Section 13.7): a continuous random walk (each day opens at the
+    previous day's last close, so L(d) = that close), optionally with a planted rejection edge:
+    when price touches L from above (Bid low + spread <= L; from below: Bid high >= L), it moves
+    ``bounce_atr`` x ATR (Wilder 14 on M5) away from L over ``bounce_min`` minutes. The bounce
+    re-arms once a close is ``rearm_atr`` x ATR away from L. Symmetric, so no drift."""
+    rng = np.random.default_rng(seed)
+    days = trading_days(years, days_per_year)
+    s0, s1 = session
+    n_per = s1 - s0
+    n = len(days) * n_per
+    noise = rng.normal(0.0, sigma, size=n)
+    wick = np.abs(rng.normal(0.0, 0.35 * sigma, size=(n, 2)))
+    tv = rng.poisson(60, size=n) + 1
+    sp = np.full(n, spread_pts, dtype=np.int64) + rng.integers(0, 4, size=n)
+    mos = np.tile(np.arange(n_per), len(days))
+    sp[mos < open_wide_min] = open_spread_pts
+    times = (np.repeat(np.array(days, dtype="datetime64[m]"), n_per) + (s0 + mos).astype("timedelta64[m]"))
+    tmin = times.astype(np.int64)
+    opn, close = np.empty(n), np.empty(n)
+    high, low = np.empty(n), np.empty(n)
+    p = price0
+    atr, tr_buf, prev_c5 = None, [], None
+    h5, l5 = -np.inf, np.inf
+    L, prev_close, armed, plan = None, price0, False, []
+    for i in range(n):
+        if mos[i] == 0:                                # new day: L = previous day's last close
+            L, armed, plan = (close[i - 1] if i else None), True, []
+        o = p
+        p = o + noise[i] + (plan.pop(0) if plan else 0.0)
+        hi = max(o, p) + wick[i, 0]
+        lo = min(o, p) - wick[i, 1]
+        opn[i], close[i], high[i], low[i] = o, p, hi, lo
+        if planted and L is not None and atr is not None:
+            spr = sp[i] * 10.0 ** -digits
+            if armed and not plan:
+                if prev_close > L and lo + spr <= L:
+                    plan, armed = [bounce_atr * atr / bounce_min] * bounce_min, False
+                elif prev_close < L and hi >= L:
+                    plan, armed = [-bounce_atr * atr / bounce_min] * bounce_min, False
+            if not armed and not plan and abs(p - L) >= rearm_atr * atr:
+                armed = True
+        prev_close = p
+        h5, l5 = max(h5, hi), min(l5, lo)
+        tc = tmin[i] + 1
+        if tc % 5 == 0 or i == n - 1 or (tmin[i + 1] // 5 != tmin[i] // 5):
+            tr = h5 - l5 if prev_c5 is None else max(h5 - l5, abs(h5 - prev_c5), abs(l5 - prev_c5))
+            if atr is None:
+                tr_buf.append(tr)
+                if len(tr_buf) == 14:
+                    atr = float(np.mean(tr_buf))
+            else:
+                atr += (tr - atr) / 14.0
+            prev_c5 = p
+            h5, l5 = -np.inf, np.inf
+    df = pd.DataFrame({
+        "time": pd.DatetimeIndex(times),
+        "open": np.round(opn, digits), "high": np.round(high, digits),
+        "low": np.round(low, digits), "close": np.round(close, digits),
+        "tick_volume": tv.astype(np.int64), "spread_pts": sp,
+    })
+    df["high"] = df[["open", "high", "low", "close"]].max(axis=1)
+    df["low"] = df[["open", "high", "low", "close"]].min(axis=1)
+    return df
