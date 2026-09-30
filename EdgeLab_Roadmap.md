@@ -408,7 +408,7 @@ Each is combined with a grid of stops and rewards on M5 and M15. The owner wants
 
 - **Level L(d)** = the **Bid close of the last M1 bar of the previous broker trading day** = the New York 17:00 close (the broker day boundary is aligned to NY 17:00). One level per day.
 - **Session:** the F1 window of day d, `[ResumeTime(d), 21:30)`. There are no events outside it; every trade is flat by the last M1 close ≤ 21:30 (EOD).
-- **Side of approach.** If the first decision bar of the day opens above L, price must come **down** to L (support test); if it opens below, it comes **up** (resistance test). The side is recorded and reported as a diagnostic split.
+- **Side of approach (per event).** If price is **above** L when an event starts (the last signal-bar close before the touch or break), it comes **down** to L (support test); if it is below, it comes **up** (resistance test). The side is decided **for each event**, because one day can test L from both sides. It is recorded and reported as a diagnostic split.
 - **Data:** the F1 export (2020-07 → 2022), used as is. Days are in DESIGN (discovery). Quarantined days are skipped.
 
 ### 13.3 Signal timeframes
@@ -417,7 +417,7 @@ Every family is evaluated on **M5** and on **M15**, built from M1 as in F1. The 
 - `ATRtf` = the Wilder ATR(14) of the signal timeframe, taken at the last completed bar before the event.
 - `D` = a break distance: d × ATRtf with **d ∈ {0, 0.25, 0.5, 1.0}**. This answers "how far beyond the level counts as a break".
 
-### 13.4 Entry families (first occurrence per day, per family, per TF)
+### 13.4 Entry families (every occurrence, per family, per TF)
 
 The description is for a **downward approach** (price above L, support test); the upward approach is mirrored exactly. Long entries use Ask; a limit at L fills when **Bid low + bar spread ≤ L**, at exactly L.
 
@@ -430,7 +430,15 @@ The description is for a **downward approach** (price above L, support test); th
 | **F(d)** | Failed break | After B(d)'s break bar, the first signal bar that **closes back above L** within 12 signal bars → **buy** at its close |
 
 - 1 + 1 + 4 + 4 + 4 = **14 entry variants per TF**.
-- Only the **first** trade of each variant per day counts, and at most one position per variant is open at a time.
+- **Several events per day (owner correction 2026-09-30).** The level can be tested many times in one day, and **every** test is a potential trade, not only the first.
+  - **Re-arm rule.** After an event of a variant, the next event of that variant counts only when:
+    1. its position (if any) is closed; **and**
+    2. price has moved at least **0.5 × ATRtf** away from L since that event (Bid close of a signal bar).
+
+    Without rule 2, the jitter of price sitting on the level would count as dozens of "tests".
+  - At most **one position per variant** is open at a time.
+  - Each event carries its **test number of the day** (1st, 2nd, 3rd, 4th+ touch of L), which is reported as a diagnostic split. It answers "does the first test behave differently from later ones?"
+  - For B/BR/F, a new break (in either direction) needs a re-arm too, so a second break the same day is a new event.
 - An entry must happen before 21:00 so that it has at least 30 minutes to run.
 
 ### 13.5 Exits (12 per entry)
@@ -488,7 +496,7 @@ Required tests:
 - **Approach side** from the day's first bar.
 - **Limit fill at L** uses Bid + spread (long) and Bid (short).
 - **Each family on a hand-built day:** R1, R2, B(d) with each d, BR within and after 12 bars, and F.
-- **First occurrence per day;** no entry after 21:00; EOD close.
+- **Several events per day:** the re-arm rule (0.5 × ATRtf away and the position closed) and the test numbering; no entry after 21:00; EOD close.
 - **Structural stop** per family; the TP is net of cost.
 - **Planted rejection edge:** a synthetic series where price bounces from L by +2 ATR → R1/R2 with k = 2 pass; B fails.
 - **Random walk:** the result must be `F5_STOP`.
@@ -499,6 +507,7 @@ Required tests:
 # Update Log
 
 ## 2026-09-30 — F5 authorized (owner decision)
+- Owner correction: the level can be tested **several times a day**; every test is an event (re-arm after 0.5 × ATR away and the position closed), numbered 1st/2nd/3rd/4th+ per day.
 - One event only: price reaching the previous NY close. Fade (R1 limit, R2 rejection), breakout B(d), break-retest BR(d), failed break F(d); d ∈ {0, 0.25, 0.5, 1.0} × ATR; M5 and M15.
 - 12 exits (ATR 0.5/1/2 and structural stops × net 1/2/3 R targets); 336 fixed-rule configurations, no model; reality check on the maximum with direction-flip permutations; stop × target heatmaps.
 
