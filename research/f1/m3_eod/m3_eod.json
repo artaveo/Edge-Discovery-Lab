@@ -1,0 +1,265 @@
+{
+ "config_fingerprint": "7e945e717983b088",
+ "per_year": {
+  "2021": {
+   "eligible_moments": 61711,
+   "trades": 61711,
+   "long_share": 0.3033494838845587,
+   "short_share": 0.6966505161154414,
+   "days": 255,
+   "days_all_long": 70,
+   "days_all_short": 177,
+   "days_mixed": 8,
+   "m3_mean_usd": 0.47367109060491014,
+   "m3_long_trades_mean_usd": -0.12637021430769624,
+   "m3_short_trades_mean_usd": 0.7349530619003904,
+   "b0_long_mean_usd": -0.8916243996642379,
+   "b0_short_mean_usd": 0.39424781112475515
+  },
+  "2022": {
+   "eligible_moments": 60630,
+   "trades": 60630,
+   "long_share": 0.27674418604651163,
+   "short_share": 0.7232558139534884,
+   "days": 256,
+   "days_all_long": 71,
+   "days_all_short": 185,
+   "days_mixed": 0,
+   "m3_mean_usd": 0.7089850243219512,
+   "m3_long_trades_mean_usd": 1.225297827865803,
+   "m3_short_trades_mean_usd": 0.5114248197505094,
+   "b0_long_mean_usd": -0.40660973074978185,
+   "b0_short_mean_usd": -0.11483668110441572
+  }
+ },
+ "rules": {
+  "M3-EOD-2021-000": {
+   "text": "if pd_range_rel <= 0.6857 and pd_ret <= 0.2275 and pd_ret <= -0.1403 then SHORT EOD",
+   "train_moments": 951,
+   "train_days": 4,
+   "train_mean_long_usd": -8.776632845257645,
+   "train_mean_short_usd": 8.256016997013688,
+   "test_trades": 2672,
+   "test_days": 11,
+   "test_mean_usd": 2.8564662562873884
+  },
+  "M3-EOD-2021-001": {
+   "text": "if pd_range_rel <= 0.6857 and pd_ret <= 0.2275 and -0.1403 < pd_ret then LONG EOD",
+   "train_moments": 1660,
+   "train_days": 7,
+   "train_mean_long_usd": 2.3385079988433533,
+   "train_mean_short_usd": -2.830558266216848,
+   "test_trades": 7258,
+   "test_days": 30,
+   "test_mean_usd": -0.5688721178947491
+  },
+  "M3-EOD-2021-002": {
+   "text": "if pd_range_rel <= 0.6857 and 0.2275 < pd_ret then SHORT EOD",
+   "train_moments": 948,
+   "train_days": 4,
+   "train_mean_long_usd": -20.623582229198284,
+   "train_mean_short_usd": 20.1410169269198,
+   "test_trades": 1945,
+   "test_days": 8,
+   "test_mean_usd": 6.1758168380873775
+  },
+  "M3-EOD-2021-003": {
+   "text": "if 0.6857 < pd_range_rel and d_pdl <= -5.049 then SHORT EOD",
+   "train_moments": 531,
+   "train_days": 10,
+   "train_mean_long_usd": -16.401952191035747,
+   "train_mean_short_usd": 16.032153270357785,
+   "test_trades": 1480,
+   "test_days": 26,
+   "test_mean_usd": 2.5754868847567236
+  },
+  "M3-EOD-2021-004": {
+   "text": "if 0.6857 < pd_range_rel and -5.049 < d_pdl and pd_range_rel <= 0.8862 then LONG EOD",
+   "train_moments": 5972,
+   "train_days": 26,
+   "train_mean_long_usd": 3.8846303266979314,
+   "train_mean_short_usd": -4.398484207796391,
+   "test_trades": 11462,
+   "test_days": 48,
+   "test_mean_usd": 0.15383209037166418
+  },
+  "M3-EOD-2021-005": {
+   "text": "if 0.6857 < pd_range_rel and -5.049 < d_pdl and 0.8862 < pd_range_rel then SHORT EOD",
+   "train_moments": 16796,
+   "train_days": 74,
+   "train_mean_long_usd": -0.5853995328792455,
+   "train_mean_short_usd": 0.09332099581804056,
+   "test_trades": 36894,
+   "test_days": 158,
+   "test_mean_usd": 0.2206376350582722
+  },
+  "M3-EOD-2022-000": {
+   "text": "if pd_ret <= 1.154 and pd_range_rel <= 0.6848 and pd_ret <= 0.2328 then SHORT EOD",
+   "train_moments": 12785,
+   "train_days": 53,
+   "train_mean_long_usd": -1.43204138449746,
+   "train_mean_short_usd": 0.9308463745952305,
+   "test_trades": 7108,
+   "test_days": 30,
+   "test_mean_usd": -0.2095958051547606
+  },
+  "M3-EOD-2022-001": {
+   "text": "if pd_ret <= 1.154 and pd_range_rel <= 0.6848 and 0.2328 < pd_ret then SHORT EOD",
+   "train_moments": 2649,
+   "train_days": 11,
+   "train_mean_long_usd": -11.976958722174382,
+   "train_mean_short_usd": 11.503615079260072,
+   "test_trades": 1664,
+   "test_days": 7,
+   "test_mean_usd": -2.664217572115421
+  },
+  "M3-EOD-2022-002": {
+   "text": "if pd_ret <= 1.154 and 0.6848 < pd_range_rel and pd_range_rel <= 0.8871 then LONG EOD",
+   "train_moments": 18194,
+   "train_days": 76,
+   "train_mean_long_usd": 1.4759922415389726,
+   "train_mean_short_usd": -1.9946332393888129,
+   "test_trades": 13686,
+   "test_days": 58,
+   "test_mean_usd": 1.8138412591202813
+  },
+  "M3-EOD-2022-003": {
+   "text": "if pd_ret <= 1.154 and 0.6848 < pd_range_rel and 0.8871 < pd_range_rel then SHORT EOD",
+   "train_moments": 51854,
+   "train_days": 217,
+   "train_mean_long_usd": -1.3569680842858731,
+   "train_mean_short_usd": 0.8655981593983042,
+   "test_trades": 35079,
+   "test_days": 148,
+   "test_mean_usd": 0.8081631401670423
+  },
+  "M3-EOD-2022-004": {
+   "text": "if 1.154 < pd_ret and d_asia_hi <= 0.4368 and weekday <= 1.5 then LONG EOD",
+   "train_moments": 831,
+   "train_days": 4,
+   "train_mean_long_usd": 4.14915569328518,
+   "train_mean_short_usd": -4.597510973381449,
+   "test_trades": 515,
+   "test_days": 3,
+   "test_mean_usd": 8.62897606834958
+  },
+  "M3-EOD-2022-005": {
+   "text": "if 1.154 < pd_ret and d_asia_hi <= 0.4368 and 1.5 < weekday then LONG EOD",
+   "train_moments": 1322,
+   "train_days": 9,
+   "train_mean_long_usd": 10.822290002299559,
+   "train_mean_short_usd": -11.28366309906204,
+   "test_trades": 2278,
+   "test_days": 10,
+   "test_mean_usd": -4.430906341422257
+  },
+  "M3-EOD-2022-006": {
+   "text": "if 1.154 < pd_ret and 0.4368 < d_asia_hi then LONG EOD",
+   "train_moments": 943,
+   "train_days": 11,
+   "train_mean_long_usd": 0.18588644581125915,
+   "train_mean_short_usd": -0.6317593654294992,
+   "test_trades": 300,
+   "test_days": 8,
+   "test_mean_usd": 4.615742506666679
+  }
+ },
+ "both_years": {
+  "m3_mean_usd": 0.5902884453859256,
+  "long_share": 0.29016437661944894,
+  "b0_long_mean_usd": -0.6512598499525019,
+  "b0_short_mean_usd": 0.14195468973573083
+ },
+ "examples": [
+  {
+   "file": "charts/ex_01.svg",
+   "time": "2021-01-05 07:55",
+   "exit": "2021-01-05 21:30",
+   "side": "SHORT",
+   "rule": "M3-EOD-2021-005",
+   "net_usd": -13.692049920000036,
+   "date": "2021-01-05"
+  },
+  {
+   "file": "charts/ex_02.svg",
+   "time": "2021-01-27 03:40",
+   "exit": "2021-01-27 21:30",
+   "side": "LONG",
+   "rule": "M3-EOD-2021-001",
+   "net_usd": -3.9091254400000546,
+   "date": "2021-01-27"
+  },
+  {
+   "file": "charts/ex_03.svg",
+   "time": "2021-05-24 10:10",
+   "exit": "2021-05-24 21:30",
+   "side": "LONG",
+   "rule": "M3-EOD-2021-004",
+   "net_usd": 0.44975551999983626,
+   "date": "2021-05-24"
+  },
+  {
+   "file": "charts/ex_04.svg",
+   "time": "2021-09-09 14:30",
+   "exit": "2021-09-09 21:30",
+   "side": "SHORT",
+   "rule": "M3-EOD-2021-005",
+   "net_usd": 3.9324102400000274,
+   "date": "2021-09-09"
+  },
+  {
+   "file": "charts/ex_05.svg",
+   "time": "2021-12-29 03:35",
+   "exit": "2021-12-29 21:30",
+   "side": "SHORT",
+   "rule": "M3-EOD-2021-005",
+   "net_usd": 1.122214399999891,
+   "date": "2021-12-29"
+  },
+  {
+   "file": "charts/ex_06.svg",
+   "time": "2022-04-06 18:20",
+   "exit": "2022-04-06 21:30",
+   "side": "SHORT",
+   "rule": "M3-EOD-2022-003",
+   "net_usd": 9.748262720000001,
+   "date": "2022-04-06"
+  },
+  {
+   "file": "charts/ex_07.svg",
+   "time": "2022-05-09 07:00",
+   "exit": "2022-05-09 21:30",
+   "side": "SHORT",
+   "rule": "M3-EOD-2022-003",
+   "net_usd": 18.11000192000011,
+   "date": "2022-05-09"
+  },
+  {
+   "file": "charts/ex_08.svg",
+   "time": "2022-07-19 05:00",
+   "exit": "2022-07-19 21:30",
+   "side": "LONG",
+   "rule": "M3-EOD-2022-002",
+   "net_usd": 5.275410239999982,
+   "date": "2022-07-19"
+  },
+  {
+   "file": "charts/ex_09.svg",
+   "time": "2022-10-05 14:25",
+   "exit": "2022-10-05 21:30",
+   "side": "SHORT",
+   "rule": "M3-EOD-2022-003",
+   "net_usd": -4.924708479999827,
+   "date": "2022-10-05"
+  },
+  {
+   "file": "charts/ex_10.svg",
+   "time": "2022-10-13 05:55",
+   "exit": "2022-10-13 21:30",
+   "side": "SHORT",
+   "rule": "M3-EOD-2022-001",
+   "net_usd": 3.26653952,
+   "date": "2022-10-13"
+  }
+ ]
+}
