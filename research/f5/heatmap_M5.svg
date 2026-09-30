@@ -1,0 +1,452 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1290" height="336" font-family="sans-serif" font-size="10">
+<rect width="1290" height="336" fill="#ffffff"/>
+<text x="30" y="20" font-size="13" fill="#111">M5: pooled mean net R 2021–2022 (rows = stop, columns = k) · colour scale ±0.83 R</text>
+<text x="30" y="50" font-size="11" fill="#111">R1</text>
+<text x="92" y="64" fill="#555">k1</text>
+<text x="132" y="64" fill="#555">k2</text>
+<text x="172" y="64" fill="#555">k3</text>
+<text x="30" y="83" fill="#555">0.5ATR</text>
+<rect x="80" y="68" width="38" height="20" fill="rgba(207,34,46,0.58)" stroke="#ccc"/>
+<text x="84" y="82" fill="#111">-0.48</text>
+<rect x="120" y="68" width="38" height="20" fill="rgba(207,34,46,0.56)" stroke="#ccc"/>
+<text x="124" y="82" fill="#111">-0.46</text>
+<rect x="160" y="68" width="38" height="20" fill="rgba(207,34,46,0.57)" stroke="#ccc"/>
+<text x="164" y="82" fill="#111">-0.47</text>
+<text x="30" y="105" fill="#555">1ATR</text>
+<rect x="80" y="90" width="38" height="20" fill="rgba(207,34,46,0.31)" stroke="#ccc"/>
+<text x="84" y="104" fill="#111">-0.26</text>
+<rect x="120" y="90" width="38" height="20" fill="rgba(207,34,46,0.31)" stroke="#ccc"/>
+<text x="124" y="104" fill="#111">-0.26</text>
+<rect x="160" y="90" width="38" height="20" fill="rgba(207,34,46,0.30)" stroke="#ccc"/>
+<text x="164" y="104" fill="#111">-0.25</text>
+<text x="30" y="127" fill="#555">2ATR</text>
+<rect x="80" y="112" width="38" height="20" fill="rgba(207,34,46,0.12)" stroke="#ccc"/>
+<text x="84" y="126" fill="#111">-0.10</text>
+<rect x="120" y="112" width="38" height="20" fill="rgba(207,34,46,0.10)" stroke="#ccc"/>
+<text x="124" y="126" fill="#111">-0.08</text>
+<rect x="160" y="112" width="38" height="20" fill="rgba(207,34,46,0.13)" stroke="#ccc"/>
+<text x="164" y="126" fill="#111">-0.10</text>
+<text x="30" y="149" fill="#555">struct</text>
+<rect x="80" y="134" width="38" height="20" fill="rgba(207,34,46,0.61)" stroke="#ccc"/>
+<text x="84" y="148" fill="#111">-0.50</text>
+<rect x="120" y="134" width="38" height="20" fill="rgba(207,34,46,0.56)" stroke="#ccc"/>
+<text x="124" y="148" fill="#111">-0.46</text>
+<rect x="160" y="134" width="38" height="20" fill="rgba(207,34,46,0.54)" stroke="#ccc"/>
+<text x="164" y="148" fill="#111">-0.45</text>
+<text x="210" y="50" font-size="11" fill="#111">R2</text>
+<text x="272" y="64" fill="#555">k1</text>
+<text x="312" y="64" fill="#555">k2</text>
+<text x="352" y="64" fill="#555">k3</text>
+<text x="210" y="83" fill="#555">0.5ATR</text>
+<rect x="260" y="68" width="38" height="20" fill="rgba(207,34,46,0.53)" stroke="#ccc"/>
+<text x="264" y="82" fill="#111">-0.44</text>
+<rect x="300" y="68" width="38" height="20" fill="rgba(207,34,46,0.50)" stroke="#ccc"/>
+<text x="304" y="82" fill="#111">-0.42</text>
+<rect x="340" y="68" width="38" height="20" fill="rgba(207,34,46,0.50)" stroke="#ccc"/>
+<text x="344" y="82" fill="#111">-0.42</text>
+<text x="210" y="105" fill="#555">1ATR</text>
+<rect x="260" y="90" width="38" height="20" fill="rgba(207,34,46,0.26)" stroke="#ccc"/>
+<text x="264" y="104" fill="#111">-0.21</text>
+<rect x="300" y="90" width="38" height="20" fill="rgba(207,34,46,0.21)" stroke="#ccc"/>
+<text x="304" y="104" fill="#111">-0.17</text>
+<rect x="340" y="90" width="38" height="20" fill="rgba(207,34,46,0.22)" stroke="#ccc"/>
+<text x="344" y="104" fill="#111">-0.19</text>
+<text x="210" y="127" fill="#555">2ATR</text>
+<rect x="260" y="112" width="38" height="20" fill="rgba(207,34,46,0.06)" stroke="#ccc"/>
+<text x="264" y="126" fill="#111">-0.05</text>
+<rect x="300" y="112" width="38" height="20" fill="rgba(207,34,46,0.03)" stroke="#ccc"/>
+<text x="304" y="126" fill="#111">-0.02</text>
+<rect x="340" y="112" width="38" height="20" fill="rgba(207,34,46,0.07)" stroke="#ccc"/>
+<text x="344" y="126" fill="#111">-0.05</text>
+<text x="210" y="149" fill="#555">struct</text>
+<rect x="260" y="134" width="38" height="20" fill="rgba(207,34,46,0.32)" stroke="#ccc"/>
+<text x="264" y="148" fill="#111">-0.27</text>
+<rect x="300" y="134" width="38" height="20" fill="rgba(207,34,46,0.32)" stroke="#ccc"/>
+<text x="304" y="148" fill="#111">-0.26</text>
+<rect x="340" y="134" width="38" height="20" fill="rgba(207,34,46,0.31)" stroke="#ccc"/>
+<text x="344" y="148" fill="#111">-0.26</text>
+<text x="390" y="50" font-size="11" fill="#111">B(0)</text>
+<text x="452" y="64" fill="#555">k1</text>
+<text x="492" y="64" fill="#555">k2</text>
+<text x="532" y="64" fill="#555">k3</text>
+<text x="390" y="83" fill="#555">0.5ATR</text>
+<rect x="440" y="68" width="38" height="20" fill="rgba(207,34,46,0.61)" stroke="#ccc"/>
+<text x="444" y="82" fill="#111">-0.51</text>
+<rect x="480" y="68" width="38" height="20" fill="rgba(207,34,46,0.61)" stroke="#ccc"/>
+<text x="484" y="82" fill="#111">-0.50</text>
+<rect x="520" y="68" width="38" height="20" fill="rgba(207,34,46,0.62)" stroke="#ccc"/>
+<text x="524" y="82" fill="#111">-0.52</text>
+<text x="390" y="105" fill="#555">1ATR</text>
+<rect x="440" y="90" width="38" height="20" fill="rgba(207,34,46,0.37)" stroke="#ccc"/>
+<text x="444" y="104" fill="#111">-0.31</text>
+<rect x="480" y="90" width="38" height="20" fill="rgba(207,34,46,0.37)" stroke="#ccc"/>
+<text x="484" y="104" fill="#111">-0.30</text>
+<rect x="520" y="90" width="38" height="20" fill="rgba(207,34,46,0.35)" stroke="#ccc"/>
+<text x="524" y="104" fill="#111">-0.29</text>
+<text x="390" y="127" fill="#555">2ATR</text>
+<rect x="440" y="112" width="38" height="20" fill="rgba(207,34,46,0.18)" stroke="#ccc"/>
+<text x="444" y="126" fill="#111">-0.15</text>
+<rect x="480" y="112" width="38" height="20" fill="rgba(207,34,46,0.22)" stroke="#ccc"/>
+<text x="484" y="126" fill="#111">-0.18</text>
+<rect x="520" y="112" width="38" height="20" fill="rgba(207,34,46,0.28)" stroke="#ccc"/>
+<text x="524" y="126" fill="#111">-0.23</text>
+<text x="390" y="149" fill="#555">struct</text>
+<rect x="440" y="134" width="38" height="20" fill="rgba(207,34,46,0.28)" stroke="#ccc"/>
+<text x="444" y="148" fill="#111">-0.23</text>
+<rect x="480" y="134" width="38" height="20" fill="rgba(207,34,46,0.31)" stroke="#ccc"/>
+<text x="484" y="148" fill="#111">-0.26</text>
+<rect x="520" y="134" width="38" height="20" fill="rgba(207,34,46,0.32)" stroke="#ccc"/>
+<text x="524" y="148" fill="#111">-0.26</text>
+<text x="570" y="50" font-size="11" fill="#111">B(0.25)</text>
+<text x="632" y="64" fill="#555">k1</text>
+<text x="672" y="64" fill="#555">k2</text>
+<text x="712" y="64" fill="#555">k3</text>
+<text x="570" y="83" fill="#555">0.5ATR</text>
+<rect x="620" y="68" width="38" height="20" fill="rgba(207,34,46,0.63)" stroke="#ccc"/>
+<text x="624" y="82" fill="#111">-0.52</text>
+<rect x="660" y="68" width="38" height="20" fill="rgba(207,34,46,0.63)" stroke="#ccc"/>
+<text x="664" y="82" fill="#111">-0.52</text>
+<rect x="700" y="68" width="38" height="20" fill="rgba(207,34,46,0.65)" stroke="#ccc"/>
+<text x="704" y="82" fill="#111">-0.54</text>
+<text x="570" y="105" fill="#555">1ATR</text>
+<rect x="620" y="90" width="38" height="20" fill="rgba(207,34,46,0.39)" stroke="#ccc"/>
+<text x="624" y="104" fill="#111">-0.32</text>
+<rect x="660" y="90" width="38" height="20" fill="rgba(207,34,46,0.36)" stroke="#ccc"/>
+<text x="664" y="104" fill="#111">-0.30</text>
+<rect x="700" y="90" width="38" height="20" fill="rgba(207,34,46,0.36)" stroke="#ccc"/>
+<text x="704" y="104" fill="#111">-0.30</text>
+<text x="570" y="127" fill="#555">2ATR</text>
+<rect x="620" y="112" width="38" height="20" fill="rgba(207,34,46,0.17)" stroke="#ccc"/>
+<text x="624" y="126" fill="#111">-0.14</text>
+<rect x="660" y="112" width="38" height="20" fill="rgba(207,34,46,0.22)" stroke="#ccc"/>
+<text x="664" y="126" fill="#111">-0.18</text>
+<rect x="700" y="112" width="38" height="20" fill="rgba(207,34,46,0.26)" stroke="#ccc"/>
+<text x="704" y="126" fill="#111">-0.21</text>
+<text x="570" y="149" fill="#555">struct</text>
+<rect x="620" y="134" width="38" height="20" fill="rgba(207,34,46,0.27)" stroke="#ccc"/>
+<text x="624" y="148" fill="#111">-0.23</text>
+<rect x="660" y="134" width="38" height="20" fill="rgba(207,34,46,0.32)" stroke="#ccc"/>
+<text x="664" y="148" fill="#111">-0.27</text>
+<rect x="700" y="134" width="38" height="20" fill="rgba(207,34,46,0.31)" stroke="#ccc"/>
+<text x="704" y="148" fill="#111">-0.26</text>
+<text x="750" y="50" font-size="11" fill="#111">B(0.5)</text>
+<text x="812" y="64" fill="#555">k1</text>
+<text x="852" y="64" fill="#555">k2</text>
+<text x="892" y="64" fill="#555">k3</text>
+<text x="750" y="83" fill="#555">0.5ATR</text>
+<rect x="800" y="68" width="38" height="20" fill="rgba(207,34,46,0.62)" stroke="#ccc"/>
+<text x="804" y="82" fill="#111">-0.51</text>
+<rect x="840" y="68" width="38" height="20" fill="rgba(207,34,46,0.58)" stroke="#ccc"/>
+<text x="844" y="82" fill="#111">-0.48</text>
+<rect x="880" y="68" width="38" height="20" fill="rgba(207,34,46,0.56)" stroke="#ccc"/>
+<text x="884" y="82" fill="#111">-0.47</text>
+<text x="750" y="105" fill="#555">1ATR</text>
+<rect x="800" y="90" width="38" height="20" fill="rgba(207,34,46,0.38)" stroke="#ccc"/>
+<text x="804" y="104" fill="#111">-0.32</text>
+<rect x="840" y="90" width="38" height="20" fill="rgba(207,34,46,0.35)" stroke="#ccc"/>
+<text x="844" y="104" fill="#111">-0.29</text>
+<rect x="880" y="90" width="38" height="20" fill="rgba(207,34,46,0.33)" stroke="#ccc"/>
+<text x="884" y="104" fill="#111">-0.27</text>
+<text x="750" y="127" fill="#555">2ATR</text>
+<rect x="800" y="112" width="38" height="20" fill="rgba(207,34,46,0.17)" stroke="#ccc"/>
+<text x="804" y="126" fill="#111">-0.14</text>
+<rect x="840" y="112" width="38" height="20" fill="rgba(207,34,46,0.17)" stroke="#ccc"/>
+<text x="844" y="126" fill="#111">-0.14</text>
+<rect x="880" y="112" width="38" height="20" fill="rgba(207,34,46,0.16)" stroke="#ccc"/>
+<text x="884" y="126" fill="#111">-0.14</text>
+<text x="750" y="149" fill="#555">struct</text>
+<rect x="800" y="134" width="38" height="20" fill="rgba(207,34,46,0.27)" stroke="#ccc"/>
+<text x="804" y="148" fill="#111">-0.23</text>
+<rect x="840" y="134" width="38" height="20" fill="rgba(207,34,46,0.29)" stroke="#ccc"/>
+<text x="844" y="148" fill="#111">-0.24</text>
+<rect x="880" y="134" width="38" height="20" fill="rgba(207,34,46,0.26)" stroke="#ccc"/>
+<text x="884" y="148" fill="#111">-0.22</text>
+<text x="930" y="50" font-size="11" fill="#111">B(1)</text>
+<text x="992" y="64" fill="#555">k1</text>
+<text x="1032" y="64" fill="#555">k2</text>
+<text x="1072" y="64" fill="#555">k3</text>
+<text x="930" y="83" fill="#555">0.5ATR</text>
+<rect x="980" y="68" width="38" height="20" fill="rgba(207,34,46,0.59)" stroke="#ccc"/>
+<text x="984" y="82" fill="#111">-0.49</text>
+<rect x="1020" y="68" width="38" height="20" fill="rgba(207,34,46,0.53)" stroke="#ccc"/>
+<text x="1024" y="82" fill="#111">-0.44</text>
+<rect x="1060" y="68" width="38" height="20" fill="rgba(207,34,46,0.51)" stroke="#ccc"/>
+<text x="1064" y="82" fill="#111">-0.42</text>
+<text x="930" y="105" fill="#555">1ATR</text>
+<rect x="980" y="90" width="38" height="20" fill="rgba(207,34,46,0.35)" stroke="#ccc"/>
+<text x="984" y="104" fill="#111">-0.29</text>
+<rect x="1020" y="90" width="38" height="20" fill="rgba(207,34,46,0.33)" stroke="#ccc"/>
+<text x="1024" y="104" fill="#111">-0.28</text>
+<rect x="1060" y="90" width="38" height="20" fill="rgba(207,34,46,0.30)" stroke="#ccc"/>
+<text x="1064" y="104" fill="#111">-0.25</text>
+<text x="930" y="127" fill="#555">2ATR</text>
+<rect x="980" y="112" width="38" height="20" fill="rgba(207,34,46,0.16)" stroke="#ccc"/>
+<text x="984" y="126" fill="#111">-0.14</text>
+<rect x="1020" y="112" width="38" height="20" fill="rgba(207,34,46,0.13)" stroke="#ccc"/>
+<text x="1024" y="126" fill="#111">-0.11</text>
+<rect x="1060" y="112" width="38" height="20" fill="rgba(207,34,46,0.13)" stroke="#ccc"/>
+<text x="1064" y="126" fill="#111">-0.11</text>
+<text x="930" y="149" fill="#555">struct</text>
+<rect x="980" y="134" width="38" height="20" fill="rgba(207,34,46,0.25)" stroke="#ccc"/>
+<text x="984" y="148" fill="#111">-0.20</text>
+<rect x="1020" y="134" width="38" height="20" fill="rgba(207,34,46,0.22)" stroke="#ccc"/>
+<text x="1024" y="148" fill="#111">-0.18</text>
+<rect x="1060" y="134" width="38" height="20" fill="rgba(207,34,46,0.23)" stroke="#ccc"/>
+<text x="1064" y="148" fill="#111">-0.19</text>
+<text x="1110" y="50" font-size="11" fill="#111">BR(0)</text>
+<text x="1172" y="64" fill="#555">k1</text>
+<text x="1212" y="64" fill="#555">k2</text>
+<text x="1252" y="64" fill="#555">k3</text>
+<text x="1110" y="83" fill="#555">0.5ATR</text>
+<rect x="1160" y="68" width="38" height="20" fill="rgba(207,34,46,0.64)" stroke="#ccc"/>
+<text x="1164" y="82" fill="#111">-0.53</text>
+<rect x="1200" y="68" width="38" height="20" fill="rgba(207,34,46,0.63)" stroke="#ccc"/>
+<text x="1204" y="82" fill="#111">-0.52</text>
+<rect x="1240" y="68" width="38" height="20" fill="rgba(207,34,46,0.64)" stroke="#ccc"/>
+<text x="1244" y="82" fill="#111">-0.53</text>
+<text x="1110" y="105" fill="#555">1ATR</text>
+<rect x="1160" y="90" width="38" height="20" fill="rgba(207,34,46,0.34)" stroke="#ccc"/>
+<text x="1164" y="104" fill="#111">-0.28</text>
+<rect x="1200" y="90" width="38" height="20" fill="rgba(207,34,46,0.32)" stroke="#ccc"/>
+<text x="1204" y="104" fill="#111">-0.27</text>
+<rect x="1240" y="90" width="38" height="20" fill="rgba(207,34,46,0.29)" stroke="#ccc"/>
+<text x="1244" y="104" fill="#111">-0.24</text>
+<text x="1110" y="127" fill="#555">2ATR</text>
+<rect x="1160" y="112" width="38" height="20" fill="rgba(207,34,46,0.15)" stroke="#ccc"/>
+<text x="1164" y="126" fill="#111">-0.12</text>
+<rect x="1200" y="112" width="38" height="20" fill="rgba(207,34,46,0.14)" stroke="#ccc"/>
+<text x="1204" y="126" fill="#111">-0.12</text>
+<rect x="1240" y="112" width="38" height="20" fill="rgba(207,34,46,0.20)" stroke="#ccc"/>
+<text x="1244" y="126" fill="#111">-0.17</text>
+<text x="1110" y="149" fill="#555">struct</text>
+<rect x="1160" y="134" width="38" height="20" fill="rgba(207,34,46,0.47)" stroke="#ccc"/>
+<text x="1164" y="148" fill="#111">-0.39</text>
+<rect x="1200" y="134" width="38" height="20" fill="rgba(207,34,46,0.44)" stroke="#ccc"/>
+<text x="1204" y="148" fill="#111">-0.37</text>
+<rect x="1240" y="134" width="38" height="20" fill="rgba(207,34,46,0.44)" stroke="#ccc"/>
+<text x="1244" y="148" fill="#111">-0.36</text>
+<text x="30" y="188" font-size="11" fill="#111">BR(0.25)</text>
+<text x="92" y="202" fill="#555">k1</text>
+<text x="132" y="202" fill="#555">k2</text>
+<text x="172" y="202" fill="#555">k3</text>
+<text x="30" y="221" fill="#555">0.5ATR</text>
+<rect x="80" y="206" width="38" height="20" fill="rgba(207,34,46,0.63)" stroke="#ccc"/>
+<text x="84" y="220" fill="#111">-0.52</text>
+<rect x="120" y="206" width="38" height="20" fill="rgba(207,34,46,0.60)" stroke="#ccc"/>
+<text x="124" y="220" fill="#111">-0.50</text>
+<rect x="160" y="206" width="38" height="20" fill="rgba(207,34,46,0.60)" stroke="#ccc"/>
+<text x="164" y="220" fill="#111">-0.50</text>
+<text x="30" y="243" fill="#555">1ATR</text>
+<rect x="80" y="228" width="38" height="20" fill="rgba(207,34,46,0.32)" stroke="#ccc"/>
+<text x="84" y="242" fill="#111">-0.27</text>
+<rect x="120" y="228" width="38" height="20" fill="rgba(207,34,46,0.32)" stroke="#ccc"/>
+<text x="124" y="242" fill="#111">-0.27</text>
+<rect x="160" y="228" width="38" height="20" fill="rgba(207,34,46,0.25)" stroke="#ccc"/>
+<text x="164" y="242" fill="#111">-0.21</text>
+<text x="30" y="265" fill="#555">2ATR</text>
+<rect x="80" y="250" width="38" height="20" fill="rgba(207,34,46,0.13)" stroke="#ccc"/>
+<text x="84" y="264" fill="#111">-0.11</text>
+<rect x="120" y="250" width="38" height="20" fill="rgba(207,34,46,0.10)" stroke="#ccc"/>
+<text x="124" y="264" fill="#111">-0.09</text>
+<rect x="160" y="250" width="38" height="20" fill="rgba(207,34,46,0.17)" stroke="#ccc"/>
+<text x="164" y="264" fill="#111">-0.14</text>
+<text x="30" y="287" fill="#555">struct</text>
+<rect x="80" y="272" width="38" height="20" fill="rgba(207,34,46,0.62)" stroke="#ccc"/>
+<text x="84" y="286" fill="#111">-0.52</text>
+<rect x="120" y="272" width="38" height="20" fill="rgba(207,34,46,0.58)" stroke="#ccc"/>
+<text x="124" y="286" fill="#111">-0.48</text>
+<rect x="160" y="272" width="38" height="20" fill="rgba(207,34,46,0.55)" stroke="#ccc"/>
+<text x="164" y="286" fill="#111">-0.45</text>
+<text x="210" y="188" font-size="11" fill="#111">BR(0.5)</text>
+<text x="272" y="202" fill="#555">k1</text>
+<text x="312" y="202" fill="#555">k2</text>
+<text x="352" y="202" fill="#555">k3</text>
+<text x="210" y="221" fill="#555">0.5ATR</text>
+<rect x="260" y="206" width="38" height="20" fill="rgba(207,34,46,0.62)" stroke="#ccc"/>
+<text x="264" y="220" fill="#111">-0.52</text>
+<rect x="300" y="206" width="38" height="20" fill="rgba(207,34,46,0.62)" stroke="#ccc"/>
+<text x="304" y="220" fill="#111">-0.51</text>
+<rect x="340" y="206" width="38" height="20" fill="rgba(207,34,46,0.60)" stroke="#ccc"/>
+<text x="344" y="220" fill="#111">-0.50</text>
+<text x="210" y="243" fill="#555">1ATR</text>
+<rect x="260" y="228" width="38" height="20" fill="rgba(207,34,46,0.30)" stroke="#ccc"/>
+<text x="264" y="242" fill="#111">-0.25</text>
+<rect x="300" y="228" width="38" height="20" fill="rgba(207,34,46,0.29)" stroke="#ccc"/>
+<text x="304" y="242" fill="#111">-0.24</text>
+<rect x="340" y="228" width="38" height="20" fill="rgba(207,34,46,0.24)" stroke="#ccc"/>
+<text x="344" y="242" fill="#111">-0.20</text>
+<text x="210" y="265" fill="#555">2ATR</text>
+<rect x="260" y="250" width="38" height="20" fill="rgba(207,34,46,0.10)" stroke="#ccc"/>
+<text x="264" y="264" fill="#111">-0.08</text>
+<rect x="300" y="250" width="38" height="20" fill="rgba(207,34,46,0.04)" stroke="#ccc"/>
+<text x="304" y="264" fill="#111">-0.03</text>
+<rect x="340" y="250" width="38" height="20" fill="rgba(207,34,46,0.12)" stroke="#ccc"/>
+<text x="344" y="264" fill="#111">-0.10</text>
+<text x="210" y="287" fill="#555">struct</text>
+<rect x="260" y="272" width="38" height="20" fill="rgba(207,34,46,0.77)" stroke="#ccc"/>
+<text x="264" y="286" fill="#111">-0.64</text>
+<rect x="300" y="272" width="38" height="20" fill="rgba(207,34,46,0.74)" stroke="#ccc"/>
+<text x="304" y="286" fill="#111">-0.61</text>
+<rect x="340" y="272" width="38" height="20" fill="rgba(207,34,46,0.71)" stroke="#ccc"/>
+<text x="344" y="286" fill="#111">-0.59</text>
+<text x="390" y="188" font-size="11" fill="#111">BR(1)</text>
+<text x="452" y="202" fill="#555">k1</text>
+<text x="492" y="202" fill="#555">k2</text>
+<text x="532" y="202" fill="#555">k3</text>
+<text x="390" y="221" fill="#555">0.5ATR</text>
+<rect x="440" y="206" width="38" height="20" fill="rgba(207,34,46,0.65)" stroke="#ccc"/>
+<text x="444" y="220" fill="#111">-0.54</text>
+<rect x="480" y="206" width="38" height="20" fill="rgba(207,34,46,0.59)" stroke="#ccc"/>
+<text x="484" y="220" fill="#111">-0.49</text>
+<rect x="520" y="206" width="38" height="20" fill="rgba(207,34,46,0.58)" stroke="#ccc"/>
+<text x="524" y="220" fill="#111">-0.48</text>
+<text x="390" y="243" fill="#555">1ATR</text>
+<rect x="440" y="228" width="38" height="20" fill="rgba(207,34,46,0.29)" stroke="#ccc"/>
+<text x="444" y="242" fill="#111">-0.24</text>
+<rect x="480" y="228" width="38" height="20" fill="rgba(207,34,46,0.28)" stroke="#ccc"/>
+<text x="484" y="242" fill="#111">-0.24</text>
+<rect x="520" y="228" width="38" height="20" fill="rgba(207,34,46,0.27)" stroke="#ccc"/>
+<text x="524" y="242" fill="#111">-0.23</text>
+<text x="390" y="265" fill="#555">2ATR</text>
+<rect x="440" y="250" width="38" height="20" fill="rgba(207,34,46,0.10)" stroke="#ccc"/>
+<text x="444" y="264" fill="#111">-0.08</text>
+<rect x="480" y="250" width="38" height="20" fill="rgba(207,34,46,0.04)" stroke="#ccc"/>
+<text x="484" y="264" fill="#111">-0.04</text>
+<rect x="520" y="250" width="38" height="20" fill="rgba(207,34,46,0.07)" stroke="#ccc"/>
+<text x="524" y="264" fill="#111">-0.06</text>
+<text x="390" y="287" fill="#555">struct</text>
+<rect x="440" y="272" width="38" height="20" fill="rgba(207,34,46,1.00)" stroke="#ccc"/>
+<text x="444" y="286" fill="#111">-0.83</text>
+<rect x="480" y="272" width="38" height="20" fill="rgba(207,34,46,0.99)" stroke="#ccc"/>
+<text x="484" y="286" fill="#111">-0.82</text>
+<rect x="520" y="272" width="38" height="20" fill="rgba(207,34,46,0.96)" stroke="#ccc"/>
+<text x="524" y="286" fill="#111">-0.80</text>
+<text x="570" y="188" font-size="11" fill="#111">F(0)</text>
+<text x="632" y="202" fill="#555">k1</text>
+<text x="672" y="202" fill="#555">k2</text>
+<text x="712" y="202" fill="#555">k3</text>
+<text x="570" y="221" fill="#555">0.5ATR</text>
+<rect x="620" y="206" width="38" height="20" fill="rgba(207,34,46,0.63)" stroke="#ccc"/>
+<text x="624" y="220" fill="#111">-0.53</text>
+<rect x="660" y="206" width="38" height="20" fill="rgba(207,34,46,0.63)" stroke="#ccc"/>
+<text x="664" y="220" fill="#111">-0.53</text>
+<rect x="700" y="206" width="38" height="20" fill="rgba(207,34,46,0.62)" stroke="#ccc"/>
+<text x="704" y="220" fill="#111">-0.51</text>
+<text x="570" y="243" fill="#555">1ATR</text>
+<rect x="620" y="228" width="38" height="20" fill="rgba(207,34,46,0.35)" stroke="#ccc"/>
+<text x="624" y="242" fill="#111">-0.29</text>
+<rect x="660" y="228" width="38" height="20" fill="rgba(207,34,46,0.30)" stroke="#ccc"/>
+<text x="664" y="242" fill="#111">-0.25</text>
+<rect x="700" y="228" width="38" height="20" fill="rgba(207,34,46,0.26)" stroke="#ccc"/>
+<text x="704" y="242" fill="#111">-0.22</text>
+<text x="570" y="265" fill="#555">2ATR</text>
+<rect x="620" y="250" width="38" height="20" fill="rgba(207,34,46,0.16)" stroke="#ccc"/>
+<text x="624" y="264" fill="#111">-0.13</text>
+<rect x="660" y="250" width="38" height="20" fill="rgba(207,34,46,0.13)" stroke="#ccc"/>
+<text x="664" y="264" fill="#111">-0.11</text>
+<rect x="700" y="250" width="38" height="20" fill="rgba(207,34,46,0.13)" stroke="#ccc"/>
+<text x="704" y="264" fill="#111">-0.11</text>
+<text x="570" y="287" fill="#555">struct</text>
+<rect x="620" y="272" width="38" height="20" fill="rgba(207,34,46,0.19)" stroke="#ccc"/>
+<text x="624" y="286" fill="#111">-0.16</text>
+<rect x="660" y="272" width="38" height="20" fill="rgba(207,34,46,0.22)" stroke="#ccc"/>
+<text x="664" y="286" fill="#111">-0.18</text>
+<rect x="700" y="272" width="38" height="20" fill="rgba(207,34,46,0.19)" stroke="#ccc"/>
+<text x="704" y="286" fill="#111">-0.16</text>
+<text x="750" y="188" font-size="11" fill="#111">F(0.25)</text>
+<text x="812" y="202" fill="#555">k1</text>
+<text x="852" y="202" fill="#555">k2</text>
+<text x="892" y="202" fill="#555">k3</text>
+<text x="750" y="221" fill="#555">0.5ATR</text>
+<rect x="800" y="206" width="38" height="20" fill="rgba(207,34,46,0.64)" stroke="#ccc"/>
+<text x="804" y="220" fill="#111">-0.53</text>
+<rect x="840" y="206" width="38" height="20" fill="rgba(207,34,46,0.62)" stroke="#ccc"/>
+<text x="844" y="220" fill="#111">-0.51</text>
+<rect x="880" y="206" width="38" height="20" fill="rgba(207,34,46,0.61)" stroke="#ccc"/>
+<text x="884" y="220" fill="#111">-0.50</text>
+<text x="750" y="243" fill="#555">1ATR</text>
+<rect x="800" y="228" width="38" height="20" fill="rgba(207,34,46,0.37)" stroke="#ccc"/>
+<text x="804" y="242" fill="#111">-0.31</text>
+<rect x="840" y="228" width="38" height="20" fill="rgba(207,34,46,0.30)" stroke="#ccc"/>
+<text x="844" y="242" fill="#111">-0.25</text>
+<rect x="880" y="228" width="38" height="20" fill="rgba(207,34,46,0.30)" stroke="#ccc"/>
+<text x="884" y="242" fill="#111">-0.25</text>
+<text x="750" y="265" fill="#555">2ATR</text>
+<rect x="800" y="250" width="38" height="20" fill="rgba(207,34,46,0.16)" stroke="#ccc"/>
+<text x="804" y="264" fill="#111">-0.13</text>
+<rect x="840" y="250" width="38" height="20" fill="rgba(207,34,46,0.15)" stroke="#ccc"/>
+<text x="844" y="264" fill="#111">-0.12</text>
+<rect x="880" y="250" width="38" height="20" fill="rgba(207,34,46,0.15)" stroke="#ccc"/>
+<text x="884" y="264" fill="#111">-0.13</text>
+<text x="750" y="287" fill="#555">struct</text>
+<rect x="800" y="272" width="38" height="20" fill="rgba(207,34,46,0.18)" stroke="#ccc"/>
+<text x="804" y="286" fill="#111">-0.15</text>
+<rect x="840" y="272" width="38" height="20" fill="rgba(207,34,46,0.16)" stroke="#ccc"/>
+<text x="844" y="286" fill="#111">-0.13</text>
+<rect x="880" y="272" width="38" height="20" fill="rgba(207,34,46,0.19)" stroke="#ccc"/>
+<text x="884" y="286" fill="#111">-0.16</text>
+<text x="930" y="188" font-size="11" fill="#111">F(0.5)</text>
+<text x="992" y="202" fill="#555">k1</text>
+<text x="1032" y="202" fill="#555">k2</text>
+<text x="1072" y="202" fill="#555">k3</text>
+<text x="930" y="221" fill="#555">0.5ATR</text>
+<rect x="980" y="206" width="38" height="20" fill="rgba(207,34,46,0.63)" stroke="#ccc"/>
+<text x="984" y="220" fill="#111">-0.53</text>
+<rect x="1020" y="206" width="38" height="20" fill="rgba(207,34,46,0.59)" stroke="#ccc"/>
+<text x="1024" y="220" fill="#111">-0.49</text>
+<rect x="1060" y="206" width="38" height="20" fill="rgba(207,34,46,0.60)" stroke="#ccc"/>
+<text x="1064" y="220" fill="#111">-0.49</text>
+<text x="930" y="243" fill="#555">1ATR</text>
+<rect x="980" y="228" width="38" height="20" fill="rgba(207,34,46,0.38)" stroke="#ccc"/>
+<text x="984" y="242" fill="#111">-0.32</text>
+<rect x="1020" y="228" width="38" height="20" fill="rgba(207,34,46,0.31)" stroke="#ccc"/>
+<text x="1024" y="242" fill="#111">-0.26</text>
+<rect x="1060" y="228" width="38" height="20" fill="rgba(207,34,46,0.29)" stroke="#ccc"/>
+<text x="1064" y="242" fill="#111">-0.24</text>
+<text x="930" y="265" fill="#555">2ATR</text>
+<rect x="980" y="250" width="38" height="20" fill="rgba(207,34,46,0.18)" stroke="#ccc"/>
+<text x="984" y="264" fill="#111">-0.15</text>
+<rect x="1020" y="250" width="38" height="20" fill="rgba(207,34,46,0.16)" stroke="#ccc"/>
+<text x="1024" y="264" fill="#111">-0.13</text>
+<rect x="1060" y="250" width="38" height="20" fill="rgba(207,34,46,0.14)" stroke="#ccc"/>
+<text x="1064" y="264" fill="#111">-0.11</text>
+<text x="930" y="287" fill="#555">struct</text>
+<rect x="980" y="272" width="38" height="20" fill="rgba(207,34,46,0.16)" stroke="#ccc"/>
+<text x="984" y="286" fill="#111">-0.13</text>
+<rect x="1020" y="272" width="38" height="20" fill="rgba(207,34,46,0.15)" stroke="#ccc"/>
+<text x="1024" y="286" fill="#111">-0.12</text>
+<rect x="1060" y="272" width="38" height="20" fill="rgba(207,34,46,0.11)" stroke="#ccc"/>
+<text x="1064" y="286" fill="#111">-0.09</text>
+<text x="1110" y="188" font-size="11" fill="#111">F(1)</text>
+<text x="1172" y="202" fill="#555">k1</text>
+<text x="1212" y="202" fill="#555">k2</text>
+<text x="1252" y="202" fill="#555">k3</text>
+<text x="1110" y="221" fill="#555">0.5ATR</text>
+<rect x="1160" y="206" width="38" height="20" fill="rgba(207,34,46,0.64)" stroke="#ccc"/>
+<text x="1164" y="220" fill="#111">-0.53</text>
+<rect x="1200" y="206" width="38" height="20" fill="rgba(207,34,46,0.57)" stroke="#ccc"/>
+<text x="1204" y="220" fill="#111">-0.48</text>
+<rect x="1240" y="206" width="38" height="20" fill="rgba(207,34,46,0.62)" stroke="#ccc"/>
+<text x="1244" y="220" fill="#111">-0.51</text>
+<text x="1110" y="243" fill="#555">1ATR</text>
+<rect x="1160" y="228" width="38" height="20" fill="rgba(207,34,46,0.36)" stroke="#ccc"/>
+<text x="1164" y="242" fill="#111">-0.30</text>
+<rect x="1200" y="228" width="38" height="20" fill="rgba(207,34,46,0.33)" stroke="#ccc"/>
+<text x="1204" y="242" fill="#111">-0.27</text>
+<rect x="1240" y="228" width="38" height="20" fill="rgba(207,34,46,0.34)" stroke="#ccc"/>
+<text x="1244" y="242" fill="#111">-0.28</text>
+<text x="1110" y="265" fill="#555">2ATR</text>
+<rect x="1160" y="250" width="38" height="20" fill="rgba(207,34,46,0.22)" stroke="#ccc"/>
+<text x="1164" y="264" fill="#111">-0.18</text>
+<rect x="1200" y="250" width="38" height="20" fill="rgba(207,34,46,0.16)" stroke="#ccc"/>
+<text x="1204" y="264" fill="#111">-0.13</text>
+<rect x="1240" y="250" width="38" height="20" fill="rgba(207,34,46,0.16)" stroke="#ccc"/>
+<text x="1244" y="264" fill="#111">-0.13</text>
+<text x="1110" y="287" fill="#555">struct</text>
+<rect x="1160" y="272" width="38" height="20" fill="rgba(207,34,46,0.13)" stroke="#ccc"/>
+<text x="1164" y="286" fill="#111">-0.11</text>
+<rect x="1200" y="272" width="38" height="20" fill="rgba(207,34,46,0.10)" stroke="#ccc"/>
+<text x="1204" y="286" fill="#111">-0.08</text>
+<rect x="1240" y="272" width="38" height="20" fill="rgba(207,34,46,0.02)" stroke="#ccc"/>
+<text x="1244" y="286" fill="#111">-0.01</text>
+</svg>

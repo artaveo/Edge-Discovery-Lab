@@ -2,7 +2,7 @@
 
 Owner folder `E:\Trade\Edge-Discovery-Lab` · repository `Edge-Discovery-Lab` (owner publishes it from GitHub Desktop) · commits go straight to `main` (no branches, no PRs).
 
-Status: F1 complete (`F1_WEAK`). F2 complete (`F2_FAIL`). **F3 complete: `F3_STOP`** (path-dependent exits on 2020-07 → 2022, Section 12). 2025 stays locked. **F5 (previous NY close level study, Section 13) is authorized** (owner decision 2026-09-30). Nothing beyond F5 is authorized.
+Status: F1 `F1_WEAK`, F2 `F2_FAIL`, F3 `F3_STOP`, **F5 complete: `F5_STOP`** (previous NY close level, Section 13). 2025 stays locked. Nothing further is authorized; the owner decides.
 
 ---
 
@@ -581,3 +581,13 @@ Required tests:
 - Tests (Section 13.7): 26 new, 113 in total, all passing. The planted rejection edge gives `F5_PASS` with R1/R2 k = 2 and no breakout passing; the random walk gives `F5_STOP`.
 - Pre-registered details and one known property of the reality check (the maximum over configurations with few trades makes p conservative, especially for k = 1 and 2) are in `docs/EL_RunCard.md` (F5 Step B).
 - **No F5 result was produced on real data.** `research/f5/` does not exist yet.
+
+## 2026-09-30 — F5 done (cloud session) — verdict `F5_STOP`
+- One run on the committed F1 data (2020-07 → 2022; `verify_export` EXPORT OK), after all 113 tests passed. 640 days with a level, 336 configurations, 200 direction-flip permutations, runtime under a minute. Ledger: `research/f5/trials_ledger.jsonl`.
+- 7 of 336 configurations have a positive pooled mean net R; only one is positive in both years: `M15_F(1)_Sstruct_k3` (failed break of 1 ATR on M15, structural stop, 3R target), +0.07 R (2021 +0.06, 2022 +0.09), 258 trades, bootstrap lower −0.07, p = 0.29. None passes and none is weak.
+- The heatmaps (Section 13.6) show the same shape for every family and both timeframes:
+  - the result depends on the **stop width**: 0.5 ATR ≈ −0.5 R (M5) / −0.3 R (M15), 1 ATR ≈ −0.25 / −0.15, 2 ATR ≈ −0.1 / −0.05;
+  - it hardly depends on the **target** k.
+  - That is what a level with no directional information looks like: the loss per trade is about the fixed cost (spread + commission) divided by the risk. A wider stop makes the cost a smaller share of R, and a larger target changes nothing on average.
+- The null best (luckiest configuration per permutation) has median +0.06 R and a 95% quantile of +0.12 R. The conservative maximum statistic did not decide the result, because no configuration came near it.
+- Report: `research/f5/report.md`, `report.json`, `heatmap_M5.svg`, `heatmap_M15.svg`. No charts, because nothing passed.
