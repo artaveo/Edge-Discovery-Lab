@@ -335,10 +335,10 @@ def target_keys(cfg: F1Config = DEFAULT):
     return keys
 
 
-def permuted_targets(ds: Dataset, train_mask: np.ndarray, rng, cfg: F1Config = DEFAULT) -> dict:
+def permuted_targets(ds: Dataset, train_mask: np.ndarray, rng, cfg: F1Config = DEFAULT, keys=None) -> dict:
     src, _ = day_block_permutation(ds.day, ds.slot, train_mask, rng)
     y = {}
-    for k in target_keys(cfg):
+    for k in (target_keys(cfg) if keys is None else keys):
         v = ds.y[k].copy()
         idx = np.flatnonzero(train_mask)
         s = src[idx]
@@ -348,26 +348,30 @@ def permuted_targets(ds: Dataset, train_mask: np.ndarray, rng, cfg: F1Config = D
 
 
 def run_walkforward(ds: Dataset, cfg: F1Config = DEFAULT, perm_run: int | None = None,
-                    keep_rules: bool = True) -> dict:
+                    keep_rules: bool = True, targets=None) -> dict:
     """Run M1-M3 for every fold and horizon.
 
     ``perm_run=None`` is the real run; an integer k runs the B1 null with the train
     targets day-block shuffled (seed derived from ``cfg.seed`` and k).
 
     Returns {(family, horizon): {"rows", "dir", "net_usd", "net_atr", "fold_rules"}}
-    where rows index the dataset (out-of-fold test trades)."""
-    out = {(fam, horizon_name(h)): {"rows": [], "dir": [], "net_usd": [], "net_atr": [],
-                                    "fold_rules": {}, "rule_hits": []}
-           for fam in FAMILIES for h in cfg.horizons}
+    where rows index the dataset (out-of-fold test trades).
+
+    ``targets`` (F3): target names to use instead of the F1 horizons; the dataset must hold
+    ``long_<name>`` / ``short_<name>``. Without it, F1 behaviour is unchanged."""
+    names = [horizon_name(h) for h in cfg.horizons] if targets is None else list(targets)
+    perm_keys = None if targets is None else [f"{s}_{n}" for n in names for s in ("long", "short")]
+    out = {(fam, hn): {"rows": [], "dir": [], "net_usd": [], "net_atr": [],
+                       "fold_rules": {}, "rule_hits": []}
+           for fam in FAMILIES for hn in names}
     for fi, (train_years, test_year) in enumerate(cfg.folds):
         tr, te = fold_masks(ds.day, train_years, test_year, cfg)
         if perm_run is None:
             ytr = ds.y
         else:
             rng = np.random.default_rng([cfg.seed, 1, int(perm_run), fi])
-            ytr = permuted_targets(ds, tr, rng, cfg)
-        for hi, h in enumerate(cfg.horizons):
-            hn = horizon_name(h)
+            ytr = permuted_targets(ds, tr, rng, cfg, keys=perm_keys)
+        for hi, hn in enumerate(names):
             yl, ys = ytr[f"long_{hn}"], ytr[f"short_{hn}"]
             m_tr = tr & np.isfinite(yl) & np.isfinite(ys)
             m_te = te & np.isfinite(ds.y[f"long_{hn}"])
@@ -388,7 +392,10 @@ def run_walkforward(ds: Dataset, cfg: F1Config = DEFAULT, perm_run: int | None =
                 o["rows"].append(rows)
                 o["dir"].append(dd)
                 o["net_usd"].append(np.where(dd > 0, ds.y[f"long_{hn}"][rows], ds.y[f"short_{hn}"][rows]))
-                o["net_atr"].append(np.where(dd > 0, ds.y[f"long_atr_{hn}"][rows], ds.y[f"short_atr_{hn}"][rows]))
+                if f"long_atr_{hn}" in ds.y:
+                    o["net_atr"].append(np.where(dd > 0, ds.y[f"long_atr_{hn}"][rows], ds.y[f"short_atr_{hn}"][rows]))
+                else:
+                    o["net_atr"].append(o["net_usd"][-1])
                 if keep_rules:
                     o["fold_rules"][test_year] = rules
                     # trades (indices into the concatenated out-of-fold trades) each rule fired on

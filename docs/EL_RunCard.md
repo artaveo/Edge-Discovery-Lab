@@ -2,6 +2,45 @@
 
 ---
 
+## F3 Step B — one run on the F1 data (cloud session)
+
+Roadmap Section 12. No new export: the committed F1 files `data/*.csv.gz` (2020-07 → 2022) are used.
+
+```
+cd python
+pip install -r requirements.txt
+python -m pytest -q                       # all tests must pass (87 at F3 Step A)
+python -m edgelab.f3 --data ../data --out ../research/f3 --jobs 4 --tests-summary "<N passed in Xs>"
+```
+
+- The run refuses to start if `research/f3/report.json` exists. Every run is appended to `research/f3/trials_ledger.jsonl`.
+- It writes `research/f3/report.md`, `report.json` and charts for passing configurations only. Commit, push and say **"F3 done"**.
+- Runtime estimate (from synthetic timing): about 30–60 s per walk-forward pass of the 84 configurations. 1 real pass + 200 permutations ≈ 30–60 min with 4 jobs.
+
+**F3 pre-registered details** (frozen in Step A, before any F3 run; full text in the docstrings of `python/edgelab/exits.py` and `f3.py`):
+1. Levels are measured from the entry price (long: Ask; short: Bid). Long SL = entry − S, TP = entry + k·S; the short mirrors this.
+2. Trailing: before bar c the stop is max(entry − S, highest Bid close from the entry bar to bar c−1 − t·A) for a long. The short mirrors it with the lowest Ask close + t·A. The stop is updated after each M1 close.
+3. Breakeven: activated by the first bar whose Bid high / Ask low reaches ±1·S; from the next bar the stop is at a net result of 0 (entry ± commission). A stop hit in the activation bar is the original stop.
+4. The EOD bar also checks the stop and the TP. A moment without any bar after it up to 21:30 has no target.
+5. R = net / (S + spread(t) + commission).
+6. One position at a time: trades in entry-time order; a trade is taken when its entry time ≥ the previous taken trade's exit time (the close of the exit bar).
+7. The statistic is the mean net R per out-of-fold trade on the one-position count; a configuration without trades in a permutation run scores 0.
+   - B0 with the same exit: always long / always short at every eligible out-of-fold moment, one position at a time, compared year by year.
+   - "≥ 100 trades per year" is counted on the one-position trades.
+   - Charts (passing configurations only): 10 random trades, seed [20260930, 6].
+8. **Known property (seen on synthetic data, not changed):** the reality check takes the maximum over all 84 configurations with no minimum trade count, as Section 12.5 says. In the null runs the maximum often comes from a configuration with few trades and a wide spread of outcomes (e.g. stop-only or trailing exits, one year only). This makes p conservative: a real edge must beat the luckiest small configuration. `F3_PASS` is still reachable (the planted test passes with p = 0), but a real edge of modest size may show as `F3_WEAK`.
+
+**Synthetic F3 tests** (`python/tests/test_exits.py`, `test_f3.py`):
+- The planted pattern starts on a tick-volume spike and moves 4 × ATR in the direction of that M5 bar within 10 min, then back within 30 min. It needs two features, so a lucky single momentum rule cannot imitate it.
+  - Take-profit grid (SL1_TP1, SL1_TP2, SL0.5_TP3, BE1_TP2) → `F3_PASS`, checked on seeds 1–3.
+  - Time exit (EOD only) → not PASS.
+  - Random walk → `F3_STOP`.
+- 40 permutations instead of 200, to keep the tests fast. The full 28-rule grid (84 configurations) is run end to end on a short slice.
+
+---
+
+# Phase F2 (complete)
+
 ## F2 Step B — export 2023–2024 (Cowork on the owner's machine)
 
 Roadmap Section 11. The pre-registration is already committed. **Never export 2025 or later.**

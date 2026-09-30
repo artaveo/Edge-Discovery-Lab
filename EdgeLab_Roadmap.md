@@ -432,3 +432,16 @@ Required tests:
 - One run (ledger `research/f2/trials_ledger.jsonl`). 2023: 258 days (1 quarantined, 2023-01-16); 2024: 260 days.
 - H1 (tree): mean net −0.59 USD/oz (2023 +0.04, 2024 −1.22), bootstrap lower −1.51, p 0.85. H2 (range rule): −0.70 (2023 −0.18, 2024 −1.20), lower −2.21, p 0.78. Neither hypothesis meets any of the four pass checks. Both rules sell 74–79% of the time, and gold rose strongly in 2024 (always long: +0.31 per moment, +1.14 per day).
 - Report: `research/f2/report.md`, `report.json`, 10 charts per hypothesis. Per Section 11.4, `F2_FAIL` → the project stops. 2025 was never exported or seen.
+
+## 2026-09-30 — F3 Step A done (cloud session)
+- Code: `python/edgelab/exits.py` (the 28-rule exit grid, M1 path resolution with SL-first on same-bar conflicts, gap fills, short triggers on Ask, trailing, breakeven, EOD; one position at a time) and `python/edgelab/f3.py` (84 configurations, walk-forward on net R, one-position primary count and all-moments secondary, B0 with the same exit, reality check on the maximum over 200 day-block permutations, verdict, report, one-run guard, ledger).
+- Extended: `models.run_walkforward` / `permuted_targets` take optional target names (F1 behaviour and the F1 config fingerprint `7e945e717983b088` unchanged); `stats.py` gains `null_max`, `max_stat_pvalue`, `max_drawdown`.
+- Tests (Section 12.7), 87 in total, all passing:
+  - hand-computed long and short SL / TP / trailing / breakeven / EOD paths, the same-bar conflict, the gap fill and Ask triggers;
+  - one position at a time;
+  - planted "+4 ATR then reverse" pattern → `F3_PASS` with take-profit exits and not with the time exit;
+  - random walk → `F3_STOP`;
+  - determinism and bounds of the maximum-statistic permutation;
+  - the full 84-configuration grid end to end on a short slice.
+- Pre-registered details and one known property of the reality check are in `docs/EL_RunCard.md` (F3 Step B). The known property: the maximum is taken over all configurations, including ones with few trades, which makes p conservative.
+- **No F3 result was produced on real data.** `research/f3/` does not exist yet.

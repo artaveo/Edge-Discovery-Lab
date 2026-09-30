@@ -130,3 +130,75 @@ def set_bar(df: pd.DataFrame, when: str, **values):
     for k, v in values.items():
         df.loc[m, k] = v
     return df
+
+
+def make_m1_f3(years=(2020, 2021, 2022), days_per_year=None, session=(6 * 60, 22 * 60), sigma=0.3,
+               price0=1500.0, spread_pts=25, open_spread_pts=80, open_wide_min=7, planted=False,
+               trigger_prob=0.04, tv_mult=8, tv_bars=5, up_atr=3.0, up_min=20, back_min=60, seed=1, digits=2):
+    """F3 synthetic data (roadmap Section 12.7): a random walk, optionally with a planted
+    "+2R then reverse" pattern.
+
+    With ``planted``, a random ``trigger_prob`` share of the M5 closes (none while a pattern
+    runs, none after 19:00) gets a tick-volume spike on its last ``tv_bars`` M1 bars
+    (x ``tv_mult``, visible to ``tv_rel`` at t). The price then moves ``up_atr`` x ATR60
+    (Wilder 14 on M5, as at t) in the direction of that M5 bar over ``up_min`` minutes and all
+    the way back over ``back_min`` minutes. A take-profit of 2 x ATR catches the move; a time
+    exit sees about zero. The pattern needs two features (volume spike and bar direction) and
+    is symmetric, so it adds no drift; a lucky single momentum rule cannot capture it cleanly."""
+    rng = np.random.default_rng(seed)
+    days = trading_days(years, days_per_year)
+    s0, s1 = session
+    n_per = s1 - s0
+    n = len(days) * n_per
+    noise = rng.normal(0.0, sigma, size=n)
+    wick = np.abs(rng.normal(0.0, 0.35 * sigma, size=(n, 2)))
+    tv = rng.poisson(60, size=n) + 1
+    sp = np.full(n, spread_pts, dtype=np.int64) + rng.integers(0, 4, size=n)
+    trig_u = rng.random(size=n)
+    mos = np.tile(np.arange(n_per), len(days))
+    sp[mos < open_wide_min] = open_spread_pts
+    times = (np.repeat(np.array(days, dtype="datetime64[m]"), n_per) + (s0 + mos).astype("timedelta64[m]"))
+    tmin = times.astype(np.int64)
+    close = np.empty(n)
+    opn = np.empty(n)
+    p = price0
+    atr, tr_buf, prev_c5 = None, [], None
+    h5, l5 = -np.inf, np.inf
+    plan = []                                  # remaining per-minute drifts of the running pattern
+    for i in range(n):
+        o = p
+        step = noise[i] + (plan.pop(0) if plan else 0.0)
+        p = o + step
+        opn[i], close[i] = o, p
+        if not planted:
+            continue
+        h5 = max(h5, max(o, p) + wick[i, 0])
+        l5 = min(l5, min(o, p) - wick[i, 1])
+        tc = tmin[i] + 1
+        if tc % 5 == 0 or i == n - 1 or (tmin[i + 1] // 5 != tmin[i] // 5):
+            tr = h5 - l5 if prev_c5 is None else max(h5 - l5, abs(h5 - prev_c5), abs(l5 - prev_c5))
+            if atr is None:
+                tr_buf.append(tr)
+                if len(tr_buf) == 14:
+                    atr = float(np.mean(tr_buf))
+            else:
+                atr += (tr - atr) / 14.0
+            r5 = p - (prev_c5 if prev_c5 is not None else p)
+            prev_c5 = p
+            h5, l5 = -np.inf, np.inf
+            if (atr is not None and tc % 5 == 0 and not plan and trig_u[i] < trigger_prob
+                    and tc % 1440 < 19 * 60 and r5 != 0 and i >= tv_bars):
+                tv[i - tv_bars + 1:i + 1] *= tv_mult
+                d = np.sign(r5) * up_atr * atr
+                plan = [d / up_min] * up_min + [-d / back_min] * back_min
+    high = np.maximum(opn, close) + wick[:, 0]
+    low = np.minimum(opn, close) - wick[:, 1]
+    df = pd.DataFrame({
+        "time": pd.DatetimeIndex(times),
+        "open": np.round(opn, digits), "high": np.round(high, digits),
+        "low": np.round(low, digits), "close": np.round(close, digits),
+        "tick_volume": tv.astype(np.int64), "spread_pts": sp,
+    })
+    df["high"] = df[["open", "high", "low", "close"]].max(axis=1)
+    df["low"] = df[["open", "high", "low", "close"]].min(axis=1)
+    return df

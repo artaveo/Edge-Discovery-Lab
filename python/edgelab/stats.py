@@ -134,3 +134,30 @@ def verdict(rows: list[dict], test_years, cfg: F1Config = DEFAULT) -> str:
     if weak:
         return "F1_WEAK"
     return "F1_STOP"
+
+
+# ----------------------------------------------------------------------------- F3: reality check on the maximum
+
+def null_max(null_means: np.ndarray) -> np.ndarray:
+    """Per permutation run, the best out-of-fold mean over all configurations
+    (roadmap Section 12.5). ``null_means`` is (runs, configurations); a configuration
+    without trades in a run scores 0, as in F1."""
+    a = np.nan_to_num(np.asarray(null_means, float), nan=0.0)
+    if a.ndim != 2 or a.shape[1] == 0:
+        return np.zeros(a.shape[0] if a.ndim else 0)
+    return a.max(axis=1)
+
+
+def max_stat_pvalue(real: float, null_best) -> float:
+    """Share of permutation runs whose best configuration is >= the real mean (a NaN real
+    mean, i.e. no trades, gets p = 1)."""
+    null_best = np.asarray(null_best, float)
+    if not np.isfinite(real) or len(null_best) == 0:
+        return 1.0
+    return float(np.mean(null_best >= real))
+
+
+def max_drawdown(values) -> float:
+    """Largest peak-to-trough fall of the cumulative sum (starting from 0), >= 0."""
+    c = np.cumsum(np.r_[0.0, np.asarray(values, float)])
+    return float(np.max(np.maximum.accumulate(c) - c))
