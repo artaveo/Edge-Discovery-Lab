@@ -57,6 +57,7 @@ def test_planted_pattern_passes_with_a_take_profit_exit(planted_tp):
     assert res["verdict"] == "F3_PASS", _table(res)
     passing = [r for r in res["rows"] if r["passes"]]
     assert passing and all(("TP" in r["exit"]) for r in passing)
+    assert any(r["exit"] == "SL1_TP2" for r in passing), _table(res)              # the 2R target itself
     for r in passing:
         assert all(r["per_year"][y]["mean_r"] > 0 and r["per_year"][y]["trades"] >= 100 for y in ("2021", "2022"))
         assert r["boot_lower_r"] > 0 and r["p_rc"] < 0.05
