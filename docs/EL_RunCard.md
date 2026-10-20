@@ -2,6 +2,61 @@
 
 ---
 
+## F6 Step B — export the Nasdaq CFD 2020-07 → 2022 (owner's machine)
+
+Roadmap Section 14. The pre-registration and the F6 code are committed. **Never export 2023 or later for this symbol.**
+Data folder below = `%APPDATA%\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075`.
+
+1. GitHub Desktop: *Fetch origin → Pull*.
+2. In MT5's Market Watch, find the FundedNext **Nasdaq-100 CFD** and note its exact name (for example `NDX100` or `US100`). Note its contract size and commission from the symbol specification and the FundedNext website.
+3. Copy `MQL5\Scripts\EdgeLab\EL_ExportM1.mq5` (v3.00, F6) over the old copy in `<data folder>\MQL5\Scripts\EdgeLab\`. Compile it with the MetaEditor command in F1 Step B below; it must show **0 errors, 0 warnings**. The committed `.ex5` is still the F2 build, so the compile is required.
+4. Keep *Max bars in chart = Unlimited* and Algo Trading on.
+5. Run the script on any chart. Set `InpSymbol` to the Nasdaq CFD's name; keep 2020 → 2022 and the folder `EdgeLab\data\f6`.
+   - The Experts log must end with `EL_ExportM1 DONE: <rows> rows in 3 files`.
+   - The script refuses XAUUSD and any year outside 2020–2022, skips bars before 2020-07-01 and never writes a bar dated 2023-01-01 or later.
+   - Note the bars per month the log prints for 2020. If July 2020 has far fewer bars than later months, stop and tell the owner: the start date must be decided before any analysis (Section 14.2).
+6. Copy the three `<symbol>_m1_<YYYY>.csv.gz` files and `manifest.json` from `<data folder>\MQL5\Files\EdgeLab\data\f6\` into the repo folder `data\f6\`. Do not touch `data\` or `data\f2\`.
+7. Run `%LOCALAPPDATA%\Programs\Python\Python312-arm64\python.exe python\tools\verify_export.py data\f6`. It must print `phase F6` and `EXPORT OK`. Any `NOTE … months with < 5000 bars` line is shown to the owner.
+8. The owner confirms the index commission. It is written into `NAS_COMMISSION_RATE` in `python/edgelab/nineam.py` (a rate per side × price, like the metals formula; `0.0` if FundedNext charges none) and here, in the same commit as the data.
+9. Commit `data/f6/*` and that line → push to `main`. Say **"F6 Step B done"**.
+
+Do not open, plot or summarise the Nasdaq data before Step C.
+
+## F6 Step C — one run (Claude Code session)
+
+```
+cd python
+python -X utf8 -m pytest -q          # all tests must pass (-X utf8: report files are UTF-8 on Windows)
+python -X utf8 -m edgelab.nineam --nas ../data/f6 --gold ../data --out ../research/f6 --tests-summary "<N passed in Xs>"
+```
+
+- The run refuses to start if `research/f6/report.json` exists or `NAS_COMMISSION_RATE` is not set. Every run is appended to `research/f6/trials_ledger.jsonl`.
+- It writes `research/f6/report.md`, `report.json` (every trade) and 10 charts per instrument under `research/f6/charts/` (drawn like the video, time axis in New York time).
+- The owner checks the charts against the video before reading the verdict. Commit, push and say **"F6 done"** with a short Persian summary.
+
+**F6 pre-registered details** (frozen in Step A, before any F6 data exists; full text in the docstring of `python/edgelab/nineam.py`):
+1. **Time.** NY = broker − 7 h by default. Per ISO week, the Nasdaq tick-volume jump at the candidate cash-open minutes 15:30 / 16:30 / 17:30 broker decides the week's offset (6 / 7 / 8 h). The jump must be ≥ 1.5 and ≥ 1.2 × the second; otherwise 7 h. The same weekly offsets are used for XAUUSD (same server clock); the XAUUSD check is reported only.
+2. **Skipped days.** A day is skipped when its 9 AM hour has no bar, or when [9:00, 11:00) NY has more than 5 missing M1 bars (the range edges count).
+3. **Pivots** come from the same broker day's M1 bars. A new X must be strictly lower (higher for a short). No pivot means no M.
+4. **The limit** is live from the bar after the break. If one bar both touches the TP and would fill the order, the order is cancelled.
+5. **The fill bar** is checked for the SL (counted as a same-bar conflict), never for the TP. There is no time stop: the path runs to SL or TP, up to the end of the data.
+6. **R** = net / chart risk (M − X); USD per lot = net × contract size.
+7. **Direction flip:** the mirrored trade has the same fill bar and entry, the other side, a stop at r and a target of 3r. One coin per 2021–2022 day, 200 permutations, seed 20260930.
+
+**Synthetic F6 tests** (`python/tests/test_nineam.py`, 31 tests):
+- the video's three examples rebuilt as M1 days give the video's side, M, SL, TP type and R;
+- the 9 AM candle includes 9:59; the offset moves the schedule; the first sweep decides; one bar sweeping both sides skips; window gaps;
+- strict pivots, the last pivot before X and its update, a break needs a close;
+- limit fills (Bid + spread / Bid), cancellation at 11:00 NY and when the TP comes first, no order without room, both target types;
+- same-bar and fill-bar stops, the gap fill, short stops on Ask, an overnight hold, an unfinished trade, one trade per day;
+- the mirrored trade, the flip p-value, the cash-open check (offsets 6 / 7 / 8);
+- the planted edge (every weekday is a winning video example) → `F6_PASS` with report and charts; random walk → `F6_STOP`;
+- the F6 export loader and `verify_export.py data/f6`; the run refuses twice and without a commission.
+
+50 permutations are used in the tests instead of 200.
+
+---
+
 ## F5 Step B — one run on the F1 data (cloud session)
 
 Roadmap Section 13. No new export: the committed F1 files `data/*.csv.gz` (2020-07 → 2022) are used.
