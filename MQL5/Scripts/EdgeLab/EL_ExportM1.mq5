@@ -1,35 +1,34 @@
 //+------------------------------------------------------------------+
 //|                                                  EL_ExportM1.mq5 |
-//| Edge Discovery Lab - Phase F6 M1 export (roadmap Section 14.2).   |
+//| Edge Discovery Lab - Phase F2 M1 export (roadmap Section 11.1).   |
 //|                                                                  |
-//| Writes one gzip CSV per year to MQL5\Files\EdgeLab\data\f6\       |
-//|   <symbol>_m1_<YYYY>.csv.gz                                      |
+//| Writes one gzip CSV per year to MQL5\Files\EdgeLab\data\f2\       |
+//|   xauusd_m1_<YYYY>.csv.gz                                        |
 //|   columns: time,open,high,low,close,tick_volume,spread_pts       |
 //|   time = broker server time "YYYY-MM-DD HH:MM:SS" (bar open)     |
 //| and manifest.json (SHA-256, rows, first/last bar, symbol spec,   |
 //| server, terminal build, export time).                            |
 //|                                                                  |
-//| DATA DISCIPLINE: F6 exports only the FundedNext Nasdaq-100 CFD,  |
-//| 2020-07-01 .. 2022-12-31. The script refuses any other year,     |
-//| never writes a bar dated 2023-01-01 or later (2023-2024 are      |
-//| reserved for a confirmation, 2025 is locked) and refuses XAUUSD  |
-//| (its F1 export exists). Earlier versions of this script are in   |
-//| git history: F1 commit d557f7e, F2 commit d5a3fe7.               |
+//| DATA DISCIPLINE: F2 may only export 2023-01-01 .. 2024-12-31.    |
+//| The script refuses any other year and never writes a bar dated   |
+//| 2025-01-01 or later (2025 is the locked final test).             |
+//| (The F1 export 2020-07-01 .. 2022 is done; its version of this   |
+//| script is in git history, commit d557f7e.)                       |
 //+------------------------------------------------------------------+
 #property copyright   "Edge Discovery Lab"
-#property version     "3.00"
-#property description "F6 M1 export of the Nasdaq CFD (2020-07-01 .. 2022-12-31 only, never 2023+) with manifest"
+#property version     "2.00"
+#property description "F2 M1 export (2023-01-01 .. 2024-12-31 only, never 2025+) with manifest"
 #property script_show_inputs
 
-input string InpSymbol   = "NDX100";          // Symbol: the Nasdaq-100 CFD name in Market Watch (e.g. NDX100 / US100)
-input int    InpYearFrom = 2020;              // First year (>= 2020; 2020 starts 07-01)
-input int    InpYearTo   = 2022;              // Last year (<= 2022)
-input string InpOutDir   = "EdgeLab\\data\\f6"; // Folder under MQL5\Files
+input string InpSymbol   = "XAUUSD";          // Symbol
+input int    InpYearFrom = 2023;              // First year (>= 2023)
+input int    InpYearTo   = 2024;              // Last year (<= 2024; 2025 is locked)
+input string InpOutDir   = "EdgeLab\\data\\f2"; // Folder under MQL5\Files
 
-#define EL_PHASE "F6"
-#define EL_MIN_YEAR 2020
-#define EL_START_DATE D'2020.07.01 00:00'   // F6 start (roadmap Section 14.2)
-#define EL_MAX_YEAR 2022          // F6: never export 2023 or later
+#define EL_PHASE "F2"
+#define EL_MIN_YEAR 2023
+#define EL_START_DATE D'2023.01.01 00:00'   // F2 start (roadmap Section 11.1)
+#define EL_MAX_YEAR 2024          // F2: never export 2025 or later
 #define EL_MAX_RETRY 40
 
 uint g_crc_table[256];
@@ -145,8 +144,8 @@ bool CopyChunk(const string sym, const datetime from, const datetime to, MqlRate
 //+------------------------------------------------------------------+
 string ExportYear(const string sym, const int year, const int digits, const string dir)
   {
-   const datetime limit = YearStart(EL_MAX_YEAR + 1);         // 2023-01-01 00:00 (hard guard)
-   const datetime y0 = (YearStart(year) > EL_START_DATE ? YearStart(year) : EL_START_DATE);   // never before 2020-07-01
+   const datetime limit = YearStart(EL_MAX_YEAR + 1);         // 2025-01-01 00:00 (hard guard)
+   const datetime y0 = (YearStart(year) > EL_START_DATE ? YearStart(year) : EL_START_DATE);   // never before 2023-01-01
    const datetime y1 = YearStart(year + 1);
    MqlDateTime s0;
    TimeToStruct(y0, s0);
@@ -293,13 +292,6 @@ void OnStart()
      {
       PrintFormat("REFUSED: %s may only export %d..%d (asked %d..%d). Nothing written.",
                   EL_PHASE, EL_MIN_YEAR, EL_MAX_YEAR, InpYearFrom, InpYearTo);
-      return;
-     }
-   string usym = InpSymbol;
-   StringToUpper(usym);
-   if(StringFind(usym, "XAU") == 0)
-     {
-      Print("REFUSED: F6 exports only the Nasdaq CFD; the XAUUSD F1 export already exists. Nothing written.");
       return;
      }
    if(!SymbolSelect(InpSymbol, true))

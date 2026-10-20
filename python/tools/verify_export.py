@@ -1,13 +1,12 @@
-"""Verify an export (F1, F2 or F6 Step B) with the Python standard library only.
+"""Verify an export (F1 or F2 Step B) with the Python standard library only.
 
 Runs on the owner's laptop (no numpy/pandas needed)::
 
     python python/tools/verify_export.py data        # F1: 2020-07-01 .. 2022
     python python/tools/verify_export.py data/f2     # F2: 2023 .. 2024 (never 2025+)
-    python python/tools/verify_export.py data/f6     # F6: Nasdaq CFD 2020-07-01 .. 2022
 
-The phase is F2 / F6 when the folder is named ``f2`` / ``f6`` and the manifest says so
-(both must agree), otherwise F1. Months with fewer than 5,000 bars are reported.
+The phase is F2 when the folder is named ``f2`` or the manifest says ``"phase": "F2"``
+(both must agree), otherwise F1.
 
 Checks, for every file in the manifest:
   * only the phase's years are listed and present (F1: 2020-2022 from 2020-07-01;
@@ -36,10 +35,7 @@ PHASES = {
     "F1": {"years": {2020, 2021, 2022}, "start": "2020-07-01"},
     # roadmap Section 11.1: F2 = 2023-2024 only; 2025 is the locked final test
     "F2": {"years": {2023, 2024}, "start": "2023-01-01"},
-    # roadmap Section 14.2: F6 = the Nasdaq CFD, 2020-07-01 .. 2022 only
-    "F6": {"years": {2020, 2021, 2022}, "start": "2020-07-01"},
 }
-SPARSE_MONTH_ROWS = 5000   # a month with fewer M1 bars is reported (FundedNext had no real history before mid-2020)
 ALLOWED = PHASES["F1"]["years"]
 F1_START = PHASES["F1"]["start"]
 HEADER = ["time", "open", "high", "low", "close", "tick_volume", "spread_pts"]
@@ -68,11 +64,9 @@ def check_file(path: Path, entry: dict, start: str = F1_START) -> list[str]:
             rows = 0
             prev = None
             first = last = None
-            months = {}
             for rec in rd:
                 rows += 1
                 t = rec[0]
-                months[t[:7]] = months.get(t[:7], 0) + 1
                 if first is None:
                     first = t
                 last = t
@@ -103,9 +97,6 @@ def check_file(path: Path, entry: dict, start: str = F1_START) -> list[str]:
     if first != entry.get("first_bar") or last != entry.get("last_bar"):
         errs.append(f"{path.name}: first/last {first}/{last} vs manifest {entry.get('first_bar')}/{entry.get('last_bar')}")
     print(f"  {path.name}: {rows} rows, {first} .. {last}" + ("" if errs else "  OK"))
-    sparse = {m: n for m, n in sorted(months.items()) if n < SPARSE_MONTH_ROWS}
-    if sparse:
-        print(f"  NOTE {path.name}: months with < {SPARSE_MONTH_ROWS} bars {sparse} (is the real history this old?)")
     return errs
 
 
@@ -116,7 +107,7 @@ def verify(data_dir: Path) -> list[str]:
     if not man_path.exists():
         return [f"{man_path} missing"]
     man = json.loads(man_path.read_text(encoding="utf-8"))
-    by_dir = data_dir.name.upper() if data_dir.name.lower() in ("f2", "f6") else "F1"
+    by_dir = "F2" if data_dir.name.lower() == "f2" else "F1"
     phase = str(man.get("phase", "F1")).upper()
     if phase != by_dir:
         errs.append(f"manifest phase {phase} does not match folder {data_dir.name} ({by_dir})")
@@ -138,8 +129,6 @@ def verify(data_dir: Path) -> list[str]:
             m = re.search(r"(\d{4})\.csv", p.name)
             if m and int(m.group(1)) >= 2025:
                 errs.append(f"FORBIDDEN FILE {p}: 2025 and later are locked - delete it, do not commit")
-    if phase == "F6" and str(man.get("symbol", "")).upper().startswith("XAU"):
-        errs.append("F6 exports only the Nasdaq CFD; the manifest symbol is XAUUSD")
     for entry in man.get("files", []):
         if int(entry["year"]) not in allowed:
             errs.append(f"manifest lists forbidden year {entry['year']}")

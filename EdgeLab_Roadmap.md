@@ -2,7 +2,7 @@
 
 Owner folder `E:\Trade\Edge-Discovery-Lab` · repository `Edge-Discovery-Lab` (owner publishes it from GitHub Desktop) · commits go straight to `main` (no branches, no PRs).
 
-Status: F1 `F1_WEAK`, F2 `F2_FAIL`, F3 `F3_STOP`, F5 `F5_STOP` (previous NY close level, Section 13). **F6 Step A done** (NY 9 AM candle sweep + MSS, from a video; Section 14); next is Step B, the Nasdaq CFD export on the owner's machine. 2025 stays locked.
+Status: F1 `F1_WEAK`, F2 `F2_FAIL`, F3 `F3_STOP`, F5 `F5_STOP` (previous NY close level, Section 13). **F6 pre-registered** (NY 9 AM candle sweep + MSS, from a video; Section 14), Step A next. 2025 stays locked.
 
 ---
 
@@ -627,19 +627,6 @@ Required tests:
 ---
 
 # Update Log
-
-## 2026-10-21 — F6 Step A done (Claude Code session, owner's machine)
-- Code: `python/edgelab/nineam.py` contains:
-  - the time mapping with the weekly cash-open check;
-  - the 9 AM candle, first sweep, strict 1-bar pivots, MSS, break on a close, the limit with its cancellations, the target rule and one trade per day;
-  - the M1 path with no time stop (via `nyclose.path_exit`);
-  - the direction-flip permutation, the verdict, the report, 10 video-style charts per instrument, the one-run guard and the ledger.
-- `EL_ExportM1.mq5` v3.00 now exports the Nasdaq CFD 2020-07 → 2022 into `EdgeLab\data\f6`. It refuses XAUUSD and 2023+, and it must be compiled again in MetaEditor before Step B. `config/el_export.ini` and `verify_export.py` (phase F6, notes on sparse months) are updated. The Run Card has Steps B and C and the pre-registered details.
-- Tests: 31 new in `python/tests/test_nineam.py`, all passing, 144 in total. The video's three examples, rebuilt as M1 days, give the video's side, entry, stop, target type and R. The planted edge gives `F6_PASS`; the random walk gives `F6_STOP`.
-- First local run of the whole suite (Windows, numpy 2.5 / pandas 3.0) found two problems that are not F6 code and were left unchanged:
-  - The 6 F2 tests fail because Git's `text=auto` writes the frozen F2 `.json` files with CRLF on this Windows checkout. The committed (LF) files still match the hashes in Section 11; the working copy does not.
-  - The F1 report test needs `python -X utf8` on Windows.
-- `NAS_COMMISSION_RATE` stays unset until the owner confirms it; the run refuses without it. **No F6 result was produced; no Nasdaq data exists yet.**
 
 ## 2026-10-21 — F6 pre-registered (owner decision)
 - Source: a Persian Instagram video (NQ, 1H 9 AM New York candle, 1-minute execution 10:00–11:00 NY). The logic was taken from the frames and the audio transcript, then corrected by the owner: a limit at the MSS level after a close beyond it; one trade per day; no time exit; the first sweep decides the day; the 9 AM candle must be closed (nothing before 10:00 counts).
